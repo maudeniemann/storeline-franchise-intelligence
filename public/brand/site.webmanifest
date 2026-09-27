@@ -1,0 +1,17 @@
+{
+  "name": "Storeline — Franchise Intelligence",
+  "short_name": "Storeline",
+  "description": "Operational intelligence for multi-location hospitality groups.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8faf8",
+  "theme_color": "#075d67",
+  "icons": [
+    {
+      "src": "/brand/storeline-favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

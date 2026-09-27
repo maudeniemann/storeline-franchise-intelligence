@@ -40,6 +40,11 @@ test("ships the six working product surfaces and grounded data layer", async () 
     assert.match(index, new RegExp(`id="${view}-template"`));
   }
   assert.match(index, /Ask anything\. Then turn the answer into work\./);
+  assert.match(index, /\/brand\/storeline-mark\.svg/);
+  assert.match(index, /\/brand\/storeline-favicon\.svg/);
+  assert.match(index, /\/brand\/site\.webmanifest/);
+  assert.match(index, /name="theme-color" content="#075d67"/);
+  assert.match(index, /property="og:site_name" content="Storeline"/);
   assert.match(index, /<span>Sales<\/span>/);
   assert.match(index, /Sales performance and product mix, by location\./);
   assert.match(index, /id="sales-synthesis"/);
@@ -101,4 +106,13 @@ test("bundles the official menu photography used by the sales catalog", async ()
     "traditional-shakshuka.jpg",
   ];
   await Promise.all(assets.map((asset) => access(new URL(`../public/menu/${asset}`, import.meta.url))));
+});
+
+test("bundles Storeline browser and product brand assets", async () => {
+  await Promise.all([
+    access(new URL("../public/brand/storeline-mark.svg", import.meta.url)),
+    access(new URL("../public/brand/storeline-favicon.svg", import.meta.url)),
+    access(new URL("../public/brand/site.webmanifest", import.meta.url)),
+    access(new URL("../public/og.png", import.meta.url)),
+  ]);
 });

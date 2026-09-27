@@ -11,7 +11,10 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "Storeline — Franchise Intelligence",
     description: "Turn private sales, customer reviews, and market context into operational decisions for every location.",
-    icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
+    applicationName: "Storeline",
+    manifest: "/brand/site.webmanifest",
+    themeColor: "#075d67",
+    icons: { icon: "/brand/storeline-favicon.svg", shortcut: "/brand/storeline-favicon.svg" },
     openGraph: {
       title: "Storeline — Franchise Intelligence",
       description: "Turn scattered signals into operating decisions.",

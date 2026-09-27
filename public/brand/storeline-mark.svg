@@ -1,0 +1,12 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Storeline</title>
+  <path d="M13 15.5L27.5 27M10.5 35H25M14.5 51L27.5 39M39 32H54" stroke="#075D67" stroke-width="2.5" stroke-linecap="round" opacity=".32"/>
+  <circle cx="9.5" cy="12" r="5.5" fill="#DC7954"/>
+  <circle cx="7" cy="35" r="5.5" fill="#739ABA"/>
+  <circle cx="11" cy="54" r="5.5" fill="#5E9E74"/>
+  <circle cx="56.5" cy="32" r="5.5" fill="#D4A84F"/>
+  <circle cx="32" cy="32" r="17" fill="#075D67"/>
+  <rect x="23.5" y="32" width="4.5" height="9" rx="2.25" fill="white"/>
+  <rect x="29.75" y="26.5" width="4.5" height="14.5" rx="2.25" fill="white"/>
+  <rect x="36" y="21" width="4.5" height="20" rx="2.25" fill="white"/>
+</svg>
