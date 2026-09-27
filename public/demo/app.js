@@ -111,6 +111,54 @@ function renderReviews() {
     <div class="cluster-item"><div><strong>${cluster.name}</strong><span class="${cluster.direction}">${cluster.direction}</span></div><div class="cluster-track"><i style="width:${(cluster.count / cluster.total) * 100}%"></i></div><p>${cluster.count} of ${cluster.total} supplied reviews · ${cluster.action}</p></div>`).join('');
 }
 
+function renderSalesInsights(products, multiplier) {
+  const categoryTotals = Object.values(products.reduce((groups, product) => {
+    const revenue = product.price * product.units * multiplier;
+    groups[product.category] ||= { name: product.category, revenue: 0 };
+    groups[product.category].revenue += revenue;
+    return groups;
+  }, {})).sort((a, b) => b.revenue - a.revenue);
+  const totalRevenue = categoryTotals.reduce((sum, category) => sum + category.revenue, 0);
+  const categoryPeak = Math.max(...categoryTotals.map((category) => category.revenue), 1);
+  const categoryClass = (name) => `category-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+  document.getElementById('sales-category-chart').innerHTML = categoryTotals.map((category) => `
+    <div class="sales-bar-row"><div class="sales-bar-label"><span>${escapeHtml(category.name)}</span><b>${money.format(category.revenue).replace('.00', '')}</b></div><div class="sales-bar-track"><i class="${categoryClass(category.name)}" style="width:${Math.max(8, (category.revenue / categoryPeak) * 100)}%"></i></div></div>`).join('');
+  const categoryLeader = categoryTotals[0];
+  document.getElementById('sales-category-takeaway').innerHTML = `<b>${escapeHtml(categoryLeader.name)} leads</b> with ${Math.round((categoryLeader.revenue / totalRevenue) * 100)}% of selected weekly sales.`;
+
+  const velocity = [...products].sort((a, b) => b.units - a.units).slice(0, 5);
+  const velocityPeak = Math.max(...velocity.map((product) => product.units * multiplier), 1);
+  document.getElementById('sales-velocity-chart').innerHTML = velocity.map((product) => {
+    const adjustedUnits = Math.round(product.units * multiplier);
+    return `<div class="sales-bar-row"><div class="sales-bar-label"><span title="${escapeHtml(product.name)}">${escapeHtml(product.name)}</span><b>${adjustedUnits.toLocaleString()}</b></div><div class="sales-bar-track"><i class="velocity-bar" style="width:${Math.max(8, (adjustedUnits / velocityPeak) * 100)}%"></i></div></div>`;
+  }).join('');
+  const velocityLeader = velocity[0];
+  document.getElementById('sales-velocity-takeaway').innerHTML = `<b>${escapeHtml(velocityLeader.name)} sets the pace</b> at ${Math.round(velocityLeader.units * multiplier).toLocaleString()} weekly units and ${velocityLeader.margin}% margin.`;
+
+  const opportunities = [...products].sort((a, b) => b.trend - a.trend).slice(0, 5);
+  const minMargin = Math.min(...opportunities.map((product) => product.margin)) - 2;
+  const maxMargin = Math.max(...opportunities.map((product) => product.margin)) + 2;
+  const marginRange = Math.max(1, maxMargin - minMargin);
+  const maxTrend = Math.max(...opportunities.map((product) => product.trend), 1);
+  const opportunityScore = (product) => (product.trend / maxTrend) * .58 + (product.margin / 100) * .42;
+  const opportunityLeader = [...opportunities].sort((a, b) => opportunityScore(b) - opportunityScore(a))[0];
+  const opportunityLabel = (name) => ({
+    'Greek Frozen Yogurt Pilot': 'Froyo pilot',
+    'Black Sesame Latte': 'Black Sesame',
+    'Pistachio Latte': 'Pist. Latte',
+    'Pistachio Tart': 'Pistachio Tart',
+  }[name] || name);
+  document.getElementById('sales-opportunity-chart').innerHTML = `
+    <div class="opportunity-y-label"><span>${maxMargin}%</span><span>${Math.round((minMargin + maxMargin) / 2)}%</span><span>${minMargin}%</span></div>
+    <div class="opportunity-plot"><i class="plot-grid horizontal one"></i><i class="plot-grid horizontal two"></i><i class="plot-grid vertical one"></i><i class="plot-grid vertical two"></i>${opportunities.map((product, index) => {
+      const left = 7 + (product.trend / maxTrend) * 84;
+      const bottom = 9 + ((product.margin - minMargin) / marginRange) * 78;
+      const isLeader = product.name === opportunityLeader.name;
+      return `<span class="opportunity-point point-${index} ${isLeader ? 'leader' : ''}" style="left:${left}%;bottom:${bottom}%" title="${escapeHtml(product.name)}: +${product.trend}% growth, ${product.margin}% margin"><i></i><b>${escapeHtml(opportunityLabel(product.name))}</b></span>`;
+    }).join('')}<div class="opportunity-x-label"><span>Lower growth</span><span>Higher growth →</span></div></div>`;
+  document.getElementById('sales-opportunity-takeaway').innerHTML = `<b>${escapeHtml(opportunityLeader.name)} is the clearest test</b> at +${opportunityLeader.trend}% growth and ${opportunityLeader.margin}% modeled margin.`;
+}
+
 function renderPricing() {
   const locationTabs = document.getElementById('pricing-location-tabs');
   locationTabs.innerHTML = STORELINE_DATA.pricingLocations.map((location) => `<button class="filter-chip ${location.id === state.pricingLocation ? 'active' : ''}" data-pricing-location="${location.id}">${location.name}</button>`).join('');
@@ -124,6 +172,7 @@ function renderPricing() {
   const margin = Math.round(filtered.reduce((sum, product) => sum + product.margin, 0) / filtered.length);
   const leader = [...filtered].sort((a, b) => b.trend - a.trend)[0];
   const revenueLeader = [...filtered].sort((a, b) => (b.price * b.units) - (a.price * a.units))[0];
+  renderSalesInsights(filtered, multiplier);
   document.getElementById('pricing-kpis').innerHTML = `
     <article class="metric-card static"><span>Modeled weekly sales</span><strong>${money.format(revenue).replace('.00','')}</strong><small>${location.name}</small></article>
     <article class="metric-card static"><span>Modeled weekly units</span><strong>${units.toLocaleString()}</strong><small>${state.pricingCategory} products</small></article>

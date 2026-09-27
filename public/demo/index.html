@@ -129,6 +129,14 @@
         <div class="filter-row"><div class="filter-scroller" id="pricing-location-tabs"></div><div class="filter-scroller compact-filters" id="pricing-category-tabs"></div></div>
         <div class="metric-grid" id="pricing-kpis"></div>
         <section class="ai-synthesis" id="sales-synthesis"></section>
+        <section class="section-block sales-insights" aria-labelledby="sales-insights-title">
+          <div class="section-title"><div><span class="eyebrow">Visual analysis</span><h2 id="sales-insights-title">Sales insights at a glance</h2></div><span>Updates with location and category filters</span></div>
+          <div class="sales-chart-grid">
+            <article class="panel sales-chart-card"><div class="chart-card-heading"><div><span class="eyebrow">Revenue mix</span><h3>Weekly sales by category</h3></div><span class="chart-unit">USD</span></div><div class="category-chart" id="sales-category-chart"></div><p class="chart-takeaway" id="sales-category-takeaway"></p></article>
+            <article class="panel sales-chart-card"><div class="chart-card-heading"><div><span class="eyebrow">Product velocity</span><h3>Weekly unit leaders</h3></div><span class="chart-unit">Units</span></div><div class="velocity-chart" id="sales-velocity-chart"></div><p class="chart-takeaway" id="sales-velocity-takeaway"></p></article>
+            <article class="panel sales-chart-card"><div class="chart-card-heading"><div><span class="eyebrow">Growth × margin</span><h3>Opportunity map</h3></div><span class="chart-unit">Current mix</span></div><div class="opportunity-chart" id="sales-opportunity-chart" role="img" aria-label="Product growth and gross margin opportunity map"></div><p class="chart-takeaway" id="sales-opportunity-takeaway"></p></article>
+          </div>
+        </section>
         <section class="panel pricing-panel"><div class="panel-heading"><div><span class="eyebrow">Product sales</span><h3 id="pricing-table-title">All-location mix</h3></div><span class="period-label">Modeled weekly performance</span></div><div class="product-table"><div class="product-row product-head"><span>Product</span><span>Category</span><span>Price</span><span>Units</span><span>Margin</span><span>Trend</span></div><div id="product-table-body"></div></div></section>
       </section>
     </template>

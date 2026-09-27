@@ -51,6 +51,9 @@ test("ships the seven working product surfaces and grounded data layer", async (
   assert.match(index, /<span>Sales<\/span>/);
   assert.match(index, /Sales performance and product mix, by location\./);
   assert.match(index, /id="sales-synthesis"/);
+  assert.match(index, /id="sales-category-chart"/);
+  assert.match(index, /id="sales-velocity-chart"/);
+  assert.match(index, /id="sales-opportunity-chart"/);
   assert.match(index, /id="review-synthesis"/);
   assert.match(index, /id="market-synthesis"/);
   assert.match(index, /Official menu \+ photos/);
@@ -62,6 +65,7 @@ test("ships the seven working product surfaces and grounded data layer", async (
   assert.match(index, /decision-location-filter/);
   assert.match(index, /decision-type-filter/);
   assert.match(app, /AI sales synthesis/);
+  assert.match(app, /function renderSalesInsights/);
   assert.match(app, /AI review synthesis/);
   assert.match(app, /AI market synthesis/);
   assert.match(app, /function bundledAnswer/);
