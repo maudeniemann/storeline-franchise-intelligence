@@ -1,4 +1,4 @@
-window.KERNEL_DATA = {
+window.STORELINE_DATA = {
   sources: {
     yelpBoston: 'https://www.yelp.com/search?find_desc=tatte+bakery+%26+cafe&find_loc=Boston%2C+MA',
     backBayGoogle: 'https://restaurantguru.com/Latte-Lounge-Boston',

@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Kernel operational intelligence for multi-location hospitality groups." />
-    <title>Kernel — Franchise Intelligence</title>
+    <meta name="description" content="Storeline operational intelligence for multi-location hospitality groups." />
+    <title>Storeline — Franchise Intelligence</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -17,20 +17,20 @@
 
     <div class="app-shell">
       <aside class="sidebar">
-        <div class="brand" aria-label="Kernel home"><span class="brand-mark"><i></i><i></i><i></i><i></i></span><span>Kernel</span></div>
+        <div class="brand" aria-label="Storeline home"><span class="brand-mark"><i></i><i></i><i></i><i></i></span><span>Storeline</span></div>
         <nav class="main-nav" aria-label="Primary navigation">
           <button class="nav-item active" data-view="today"><span class="nav-icon">⌂</span><span>Today</span></button>
           <button class="nav-item" data-view="reviews"><span class="nav-icon">★</span><span>Reviews</span></button>
           <button class="nav-item" data-view="pricing"><span class="nav-icon">$</span><span>Pricing</span></button>
           <button class="nav-item" data-view="market"><span class="nav-icon">◎</span><span>Market</span></button>
           <button class="nav-item" data-view="next"><span class="nav-icon">→</span><span>Next steps</span><span class="nav-count" id="decision-count">4</span></button>
-          <button class="nav-item" data-view="assistant"><span class="nav-icon">✦</span><span>Ask Kernel</span></button>
+          <button class="nav-item" data-view="assistant"><span class="nav-icon">✦</span><span>Ask Storeline</span></button>
         </nav>
         <div class="sidebar-bottom"><button class="account-card" id="account-button"><span class="avatar">TB</span><span><strong>Tatte Bakery & Café</strong><small>Boston intelligence layer</small></span><span class="chevron">⌄</span></button></div>
       </aside>
 
       <main class="main-content">
-        <header class="topbar"><div class="breadcrumb"><span>Boston region</span><b>/</b><strong id="view-label">Today</strong></div><div class="topbar-actions"><span class="live-pill"><i></i>Sources refreshed</span><button class="icon-button" id="help-button" aria-label="About Kernel">?</button></div></header>
+        <header class="topbar"><div class="breadcrumb"><span>Boston region</span><b>/</b><strong id="view-label">Today</strong></div><div class="topbar-actions"><span class="live-pill" id="source-health"><i></i>Checking sources</span><button class="icon-button" id="help-button" aria-label="About Storeline">?</button></div></header>
         <div id="view-root" aria-live="polite"></div>
       </main>
     </div>
@@ -55,7 +55,7 @@
             <div class="source-proof"><span><i class="dot coral"></i><b>Reviews</b> lighter options + seating</span><span><i class="dot teal"></i><b>Pricing</b> 68% modeled margin</span><span><i class="dot blue"></i><b>Market</b> #froyo posts +16%</span></div>
             <div class="hero-actions"><button class="primary-button" data-open-recommendation="froyo">Review evidence</button><button class="secondary-button" data-view-jump="next">See all next steps</button></div>
           </div>
-          <div class="signal-orbit" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="signal-node reviews-node">REVIEWS</div><div class="signal-node price-node">PRICING</div><div class="signal-node market-node">MARKET</div><div class="kernel-node"><span class="brand-mark"><i></i><i></i><i></i><i></i></span><b>KERNEL</b></div></div>
+          <div class="signal-orbit" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="signal-node reviews-node">REVIEWS</div><div class="signal-node price-node">PRICING</div><div class="signal-node market-node">MARKET</div><div class="storeline-node"><span class="brand-mark"><i></i><i></i><i></i><i></i></span><b>STORELINE</b></div></div>
         </article>
 
         <div class="metric-grid">
@@ -108,10 +108,11 @@
 
     <template id="assistant-template">
       <section class="page assistant-page">
-        <div class="page-heading compact"><div><span class="eyebrow">Grounded operating assistant</span><h1>Ask anything. Then turn the answer into work.</h1><p>Every response draws from reviews, product economics and current market sources before it proposes an action.</p></div><span class="connected-badge"><i></i>3 knowledge layers connected</span></div>
+        <div class="page-heading compact"><div><span class="eyebrow">Grounded operating assistant</span><h1>Ask anything. Then turn the answer into work.</h1><p>Every response retrieves reviews, product economics and current market sources before it proposes an action.</p></div><span class="connected-badge" id="connection-badge"><i></i>Connecting evidence</span></div>
+        <div class="runtime-strip" id="runtime-strip"><span>Loading evidence coverage…</span></div>
         <div class="assistant-layout">
           <section class="assistant-chat panel">
-            <div class="assistant-header"><div class="assistant-avatar">K</div><div><strong>Kernel Assistant</strong><span>Reviews · Pricing · Market</span></div><button class="text-button" id="clear-chat">Clear</button></div>
+            <div class="assistant-header"><div class="assistant-avatar">S</div><div><strong>Storeline Assistant</strong><span id="assistant-status-line">Reviews · Pricing · Market</span></div><button class="text-button" id="clear-chat">Clear</button></div>
             <div class="chat-thread" id="chat-thread"></div>
             <div class="prompt-chips"><button data-prompt="Why should we test Greek frozen yogurt?">Why froyo?</button><button data-prompt="Which location should run the pilot first?">Best pilot location?</button><button data-prompt="What pricing risks should I watch?">Pricing risks?</button></div>
             <form class="chat-compose" id="chat-form"><input id="chat-input" autocomplete="off" placeholder="Ask about reviews, pricing, competitors or the next move…"/><button type="submit" aria-label="Send question">↑</button></form>

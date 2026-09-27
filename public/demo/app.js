@@ -1,4 +1,4 @@
-const KERNEL_DATA = window.KERNEL_DATA;
+const STORELINE_DATA = window.STORELINE_DATA;
 const root = document.getElementById('view-root');
 const viewLabel = document.getElementById('view-label');
 const drawer = document.getElementById('evidence-drawer');
@@ -18,16 +18,19 @@ const state = {
   approvals: new Set(),
   agentRunning: false,
   agentComplete: false,
+  runtime: null,
   chat: [
-    { role: 'assistant', text: 'I can answer across reviews, modeled product economics and market evidence — then turn the answer into an operating playbook.', sources: ['18 review excerpts', '15 products', '7 market sources'] },
+    { role: 'assistant', text: 'I retrieve across reviews, modeled product economics and market evidence — then turn the grounded answer into an operating playbook.', sources: ['Evidence index', 'Structured product tools', 'Source-level citations'] },
   ],
 };
 
-const labels = { today: 'Today', reviews: 'Reviews', pricing: 'Pricing', market: 'Market', next: 'Next steps', assistant: 'Ask Kernel' };
+const labels = { today: 'Today', reviews: 'Reviews', pricing: 'Pricing', market: 'Market', next: 'Next steps', assistant: 'Ask Storeline' };
 const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
 
-function sourceUrl(key) { return KERNEL_DATA.sources[key] || '#'; }
+function sourceUrl(key) { return STORELINE_DATA.sources[key] || '#'; }
 function stars(rating) { return '★'.repeat(rating) + '☆'.repeat(5 - rating); }
+function escapeHtml(value) { return String(value).replace(/[&<>"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[character])); }
+function safeUrl(value) { try { const url = new URL(value); return ['http:', 'https:'].includes(url.protocol) ? url.href : '#'; } catch { return '#'; } }
 
 function render(view = state.view) {
   state.view = view;
@@ -47,18 +50,18 @@ function render(view = state.view) {
 
 function renderToday() {
   const reviewList = document.getElementById('today-review-list');
-  reviewList.innerHTML = KERNEL_DATA.reviews.slice(0, 3).map((review) => `
+  reviewList.innerHTML = STORELINE_DATA.reviews.slice(0, 3).map((review) => `
     <button class="today-signal" data-view-jump="reviews"><span class="platform ${review.platform.toLowerCase()}">${review.platform[0]}</span><span><strong>${review.text}</strong><small>${review.author} · ${review.platform} · ${review.date}</small></span><b>→</b></button>`).join('');
   const marketList = document.getElementById('today-market-list');
-  marketList.innerHTML = [KERNEL_DATA.trendSignals[0], KERNEL_DATA.macroSignals[0], KERNEL_DATA.macroSignals[2]].map((item, index) => `
+  marketList.innerHTML = [STORELINE_DATA.trendSignals[0], STORELINE_DATA.macroSignals[0], STORELINE_DATA.macroSignals[2]].map((item, index) => `
     <a class="today-signal" href="${sourceUrl(item.url)}" target="_blank" rel="noreferrer"><span class="change-rank ${['coral-bg','blue-bg','yellow-bg'][index]}">${String(index + 1).padStart(2, '0')}</span><span><strong>${item.title || item.label}</strong><small>${item.stat || item.value} · ${item.source}</small></span><b>↗</b></a>`).join('');
 }
 
 function renderReviews() {
   const tabs = document.getElementById('review-location-tabs');
-  tabs.innerHTML = KERNEL_DATA.reviewLocations.map((location) => `<button class="filter-chip ${location.id === state.reviewLocation ? 'active' : ''}" data-review-location="${location.id}">${location.name}<span>${location.rating}</span></button>`).join('');
-  const selected = KERNEL_DATA.reviewLocations.find((location) => location.id === state.reviewLocation);
-  const reviews = state.reviewLocation === 'all' ? KERNEL_DATA.reviews : KERNEL_DATA.reviews.filter((review) => review.location === state.reviewLocation);
+  tabs.innerHTML = STORELINE_DATA.reviewLocations.map((location) => `<button class="filter-chip ${location.id === state.reviewLocation ? 'active' : ''}" data-review-location="${location.id}">${location.name}<span>${location.rating}</span></button>`).join('');
+  const selected = STORELINE_DATA.reviewLocations.find((location) => location.id === state.reviewLocation);
+  const reviews = state.reviewLocation === 'all' ? STORELINE_DATA.reviews : STORELINE_DATA.reviews.filter((review) => review.location === state.reviewLocation);
   document.getElementById('review-summary').innerHTML = `
     <div><span class="eyebrow">${selected.platform}</span><strong>${selected.rating}</strong><span class="summary-stars">★★★★★</span></div>
     <div><span>Review count</span><strong>${selected.count}</strong></div>
@@ -67,17 +70,17 @@ function renderReviews() {
   document.getElementById('review-feed-title').textContent = selected.name;
   document.getElementById('review-feed').innerHTML = reviews.length ? reviews.map((review) => `
     <article class="review-card"><header><span class="platform ${review.platform.toLowerCase()}">${review.platform[0]}</span><div><strong>${review.author}</strong><small>${review.platform} · ${review.date}</small></div><span class="stars">${stars(review.rating)}</span></header><p>“${review.text}”</p><footer>${review.tags.map((tag) => `<span>${tag}</span>`).join('')}</footer></article>`).join('') : `<div class="empty-state"><strong>Profile evidence only</strong><p>Open the source to inspect the location’s current public reviews.</p></div>`;
-  document.getElementById('review-clusters').innerHTML = KERNEL_DATA.reviewClusters.map((cluster) => `
+  document.getElementById('review-clusters').innerHTML = STORELINE_DATA.reviewClusters.map((cluster) => `
     <div class="cluster-item"><div><strong>${cluster.name}</strong><span class="${cluster.direction}">${cluster.direction}</span></div><div class="cluster-track"><i style="width:${(cluster.count / cluster.total) * 100}%"></i></div><p>${cluster.count} of ${cluster.total} supplied reviews · ${cluster.action}</p></div>`).join('');
 }
 
 function renderPricing() {
   const locationTabs = document.getElementById('pricing-location-tabs');
-  locationTabs.innerHTML = KERNEL_DATA.pricingLocations.map((location) => `<button class="filter-chip ${location.id === state.pricingLocation ? 'active' : ''}" data-pricing-location="${location.id}">${location.name}</button>`).join('');
-  const categories = ['All', ...new Set(KERNEL_DATA.products.map((product) => product.category))];
+  locationTabs.innerHTML = STORELINE_DATA.pricingLocations.map((location) => `<button class="filter-chip ${location.id === state.pricingLocation ? 'active' : ''}" data-pricing-location="${location.id}">${location.name}</button>`).join('');
+  const categories = ['All', ...new Set(STORELINE_DATA.products.map((product) => product.category))];
   document.getElementById('pricing-category-tabs').innerHTML = categories.map((category) => `<button class="filter-chip ${category === state.pricingCategory ? 'active' : ''}" data-pricing-category="${category}">${category}</button>`).join('');
-  const location = KERNEL_DATA.pricingLocations.find((item) => item.id === state.pricingLocation);
-  const filtered = KERNEL_DATA.products.filter((product) => state.pricingCategory === 'All' || product.category === state.pricingCategory);
+  const location = STORELINE_DATA.pricingLocations.find((item) => item.id === state.pricingLocation);
+  const filtered = STORELINE_DATA.products.filter((product) => state.pricingCategory === 'All' || product.category === state.pricingCategory);
   const multiplier = location.multiplier;
   const revenue = filtered.reduce((sum, product) => sum + (product.price * product.units * multiplier), 0);
   const units = filtered.reduce((sum, product) => sum + Math.round(product.units * multiplier), 0);
@@ -94,18 +97,18 @@ function renderPricing() {
 }
 
 function renderMarket() {
-  document.getElementById('macro-grid').innerHTML = KERNEL_DATA.macroSignals.map((signal) => `
+  document.getElementById('macro-grid').innerHTML = STORELINE_DATA.macroSignals.map((signal) => `
     <a class="macro-card ${signal.tone}" href="${sourceUrl(signal.url)}" target="_blank" rel="noreferrer"><span>${signal.source} ↗</span><strong>${signal.value}</strong><h3>${signal.label}</h3><p>${signal.detail}</p></a>`).join('');
-  document.getElementById('trend-grid').innerHTML = KERNEL_DATA.trendSignals.map((signal, index) => `
+  document.getElementById('trend-grid').innerHTML = STORELINE_DATA.trendSignals.map((signal, index) => `
     <a class="trend-card" href="${sourceUrl(signal.url)}" target="_blank" rel="noreferrer"><span class="trend-index">0${index + 1}</span><div><h3>${signal.title}</h3><p><strong>${signal.stat}</strong> ${signal.label}</p><small>${signal.source} ↗</small></div></a>`).join('');
   const locationNames = { backbay: 'Back Bay', seaport: 'Pier 4 / Seaport', cambridge: 'Cambridge', southend: 'South End' };
-  document.getElementById('market-location-tabs').innerHTML = Object.keys(KERNEL_DATA.competitorGroups).map((key) => `<button class="filter-chip ${key === state.marketLocation ? 'active' : ''}" data-market-location="${key}">${locationNames[key]}</button>`).join('');
-  document.getElementById('competitor-grid').innerHTML = KERNEL_DATA.competitorGroups[state.marketLocation].map((item) => `
+  document.getElementById('market-location-tabs').innerHTML = Object.keys(STORELINE_DATA.competitorGroups).map((key) => `<button class="filter-chip ${key === state.marketLocation ? 'active' : ''}" data-market-location="${key}">${locationNames[key]}</button>`).join('');
+  document.getElementById('competitor-grid').innerHTML = STORELINE_DATA.competitorGroups[state.marketLocation].map((item) => `
     <a class="competitor-card" href="${item.maps}" target="_blank" rel="noreferrer"><span class="map-pin">⌖</span><div><strong>${item.name}</strong><span>${item.type}</span><small>${item.address}</small></div><b>↗</b></a>`).join('');
 }
 
 function renderRecommendations() {
-  document.getElementById('recommendation-list').innerHTML = KERNEL_DATA.recommendations.map((item) => {
+  document.getElementById('recommendation-list').innerHTML = STORELINE_DATA.recommendations.map((item) => {
     const approved = state.approvals.has(item.id);
     const action = item.id === 'froyo' ? '<button class="primary-button" data-run-playbook>Run playbook</button>' : `<button class="primary-button" data-approve="${item.id}">Approve action</button>`;
     return `<article class="decision-card ${item.id === 'froyo' ? 'featured' : ''} ${approved ? 'approved-card' : ''}"><div class="decision-number">${approved ? '✓' : item.priority}</div><div class="decision-main"><div class="decision-meta"><span class="signal-chip ${approved ? 'approved' : item.id === 'froyo' ? 'opportunity' : item.id === 'beverage' ? 'watch' : 'alert'}">${approved ? 'Approved' : item.type}</span><span>${item.confidence}% confidence</span><span>${item.locations}</span></div><h2>${item.title}</h2><p>${item.why}</p><div class="decision-proof">${item.proof.map((proof, index) => `<span><i class="${['teal','coral','blue'][index] || 'teal'}"></i>${proof}</span>`).join('')}</div></div><div class="decision-actions">${approved ? '<span class="approved-label">Added to the operating plan ✓</span>' : `<button class="secondary-button" data-open-recommendation="${item.id}">Review evidence</button>${action}`}</div></article>`;
@@ -120,37 +123,66 @@ function renderAssistant() {
     showArtifacts();
   }
   document.getElementById('workflow-status').textContent = state.agentComplete ? 'Package ready' : state.agentRunning ? 'Working' : 'Ready';
+  updateRuntimeUI();
 }
 
 function renderChat() {
   const thread = document.getElementById('chat-thread');
   if (!thread) return;
-  thread.innerHTML = state.chat.map((message) => `<div class="chat-message ${message.role}">${message.role === 'assistant' ? '<span class="assistant-avatar small">K</span>' : ''}<div><p>${message.text}</p>${message.sources ? `<footer>${message.sources.map((source) => `<span>${source}</span>`).join('')}</footer>` : ''}</div></div>`).join('');
+  thread.innerHTML = state.chat.map((message) => `<div class="chat-message ${message.role}">${message.role === 'assistant' ? '<span class="assistant-avatar small">S</span>' : ''}<div><p>${escapeHtml(message.text)}</p>${message.citations?.length ? `<footer>${message.citations.map((citation) => citation.source_url ? `<a href="${safeUrl(citation.source_url)}" target="_blank" rel="noreferrer">${escapeHtml(citation.source_name)} · ${escapeHtml(citation.title)} ↗</a>` : `<span>${escapeHtml(citation.source_name)} · ${escapeHtml(citation.title)}</span>`).join('')}</footer>` : message.sources ? `<footer>${message.sources.map((source) => `<span>${escapeHtml(source)}</span>`).join('')}</footer>` : ''}</div></div>`).join('');
   thread.scrollTop = thread.scrollHeight;
 }
 
-function askKernel(question) {
+async function askStoreline(question) {
   const clean = question.trim();
   if (!clean) return;
   state.chat.push({ role: 'user', text: clean });
-  const query = clean.toLowerCase();
-  let answer = 'The strongest next move is a small, measurable test: isolate one location, one offer and one success metric before rolling it across the group.';
-  let sources = ['Decision model', 'Pricing scenario', 'Public market evidence'];
-  if (query.includes('froyo') || query.includes('yogurt')) {
-    answer = 'Test it because the evidence lines up without pretending certainty: #froyo activity rose 16%, Greek froyo launches are creating destination visits, Tatte already uses Greek-yogurt language, and the modeled item clears a 68% margin at $7.50.';
-    sources = ['Axios · +16%', 'WBEZ · 20.5k views', 'Tatte menu · 2 anchors', 'Pricing · 68% margin'];
-  } else if (query.includes('location') || query.includes('where')) {
-    answer = 'Start at Pier 4, then Back Bay. Pier 4 has the clearest cold-product fit and nearby Greek-category adjacency; Back Bay supplies volume and faster learning, but queue pressure makes execution risk higher.';
-    sources = ['Pier 4 review profile', '5 nearby businesses', 'Back Bay modeled mix'];
-  } else if (query.includes('price') || query.includes('risk')) {
-    answer = 'The main pricing risk is value perception. Boston dining prices are up 5.1% while 42% of consumers report cutting café or takeout spend. Keep the pilot at $7.50, protect an entry-price drink, and measure attach rate rather than margin alone.';
-    sources = ['BLS · +5.1%', 'NRA · 42%', 'Pricing model · $7.50'];
-  } else if (query.includes('review') || query.includes('customer')) {
-    answer = 'Product quality is the strongest positive theme. The operational drag is peak crowding and seating, followed by beverage consistency. Those are separate actions: protect hero-product availability, reduce peak friction, and calibrate matcha and cold brew twice daily.';
-    sources = ['10 supplied reviews', '763 Beacon Hill Yelp reviews', '4 review clusters'];
-  }
-  state.chat.push({ role: 'assistant', text: answer, sources });
   renderChat();
+  const input = document.getElementById('chat-input');
+  const send = document.querySelector('#chat-form button');
+  if (input) input.disabled = true;
+  if (send) { send.disabled = true; send.textContent = '…'; }
+  try {
+    const response = await fetch('/api/ask', { method: 'POST', headers: { 'content-type': 'application/json', 'x-storeline-tenant': 'tatte-boston' }, body: JSON.stringify({ question: clean, location_id: state.reviewLocation === 'all' ? null : state.reviewLocation }) });
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.error || 'The evidence service could not answer.');
+    const modeLabel = payload.mode === 'llm' ? `${payload.model} · grounded` : payload.mode === 'retrieval_fallback' ? 'Grounded retrieval · model fallback' : 'Grounded retrieval';
+    state.chat.push({ role: 'assistant', text: payload.answer, citations: payload.citations, sources: [modeLabel, `${payload.retrieved_count} sources retrieved`] });
+  } catch (error) {
+    state.chat.push({ role: 'assistant', text: `The evidence service is unavailable: ${error.message}.`, sources: ['Connection status shown above'] });
+  } finally {
+    if (input) input.disabled = false;
+    if (send) { send.disabled = false; send.textContent = '↑'; }
+    renderChat();
+    input?.focus();
+  }
+}
+
+async function loadRuntimeStatus() {
+  try {
+    const response = await fetch('/api/status', { headers: { 'x-storeline-tenant': 'tatte-boston' } });
+    if (!response.ok) throw new Error('status unavailable');
+    state.runtime = await response.json();
+  } catch {
+    state.runtime = { retrieval: 'offline', model: 'offline', locations: 0, products: 0, evaluation_cases: 0, evidence: [] };
+  }
+  updateRuntimeUI();
+}
+
+function updateRuntimeUI() {
+  const topStatus = document.getElementById('source-health');
+  if (topStatus) topStatus.lastChild.textContent = state.runtime?.retrieval === 'online' ? 'Evidence index online' : 'Evidence index offline';
+  const badge = document.getElementById('connection-badge');
+  const strip = document.getElementById('runtime-strip');
+  const line = document.getElementById('assistant-status-line');
+  if (!badge || !strip || !line) return;
+  if (!state.runtime) return;
+  const evidenceCount = (state.runtime.evidence || []).reduce((sum, item) => sum + Number(item.count || 0), 0);
+  const modelText = state.runtime.model === 'connected' ? `${state.runtime.model_name} connected` : 'Model key not connected';
+  badge.classList.toggle('warning-state', state.runtime.model !== 'connected');
+  badge.lastChild.textContent = state.runtime.retrieval === 'online' ? `${evidenceCount} evidence records indexed` : 'Evidence service offline';
+  line.textContent = `${modelText} · retrieval ${state.runtime.retrieval}`;
+  strip.innerHTML = `<span><b>${evidenceCount}</b> evidence records</span><span><b>${state.runtime.locations}</b> locations</span><span><b>${state.runtime.products}</b> products</span><span><b>${state.runtime.evaluation_cases}</b> evaluation questions</span><span class="${state.runtime.model === 'connected' ? 'runtime-ok' : 'runtime-warn'}">${modelText}</span>`;
 }
 
 function runPlaybook() {
@@ -189,7 +221,7 @@ function showArtifacts() {
 }
 
 function recommendationDrawer(id) {
-  const item = KERNEL_DATA.recommendations.find((rec) => rec.id === id);
+  const item = STORELINE_DATA.recommendations.find((rec) => rec.id === id);
   drawerKicker.textContent = 'Decision evidence';
   drawerTitle.textContent = item.title;
   const context = id === 'froyo' ? `
@@ -204,10 +236,10 @@ function recommendationDrawer(id) {
 }
 
 function locationDrawer(id) {
-  const location = KERNEL_DATA.pricingLocations.find((item) => item.id === id) || KERNEL_DATA.pricingLocations[0];
-  const reviewLocation = KERNEL_DATA.reviewLocations.find((item) => item.id === id || (id === 'seaport' && item.id === 'pier4'));
-  const reviews = KERNEL_DATA.reviews.filter((review) => review.location === (id === 'seaport' ? 'pier4' : id)).slice(0, 3);
-  const leaders = [...KERNEL_DATA.products].sort((a, b) => (b.units * b.price) - (a.units * a.price)).slice(0, 5);
+  const location = STORELINE_DATA.pricingLocations.find((item) => item.id === id) || STORELINE_DATA.pricingLocations[0];
+  const reviewLocation = STORELINE_DATA.reviewLocations.find((item) => item.id === id || (id === 'seaport' && item.id === 'pier4'));
+  const reviews = STORELINE_DATA.reviews.filter((review) => review.location === (id === 'seaport' ? 'pier4' : id)).slice(0, 3);
+  const leaders = [...STORELINE_DATA.products].sort((a, b) => (b.units * b.price) - (a.units * a.price)).slice(0, 5);
   drawerKicker.textContent = 'Location profile';
   drawerTitle.textContent = location.name;
   drawerBody.innerHTML = `<div class="recommendation-brief"><span class="signal-chip opportunity">Product mix</span><p>${location.note}. Select this location in Pricing to see adjusted units and sales.</p></div><section class="evidence-section"><div class="evidence-heading"><span class="source-mark coral">01</span><div><h3>Public review profile</h3><p>${reviewLocation ? reviewLocation.platform : 'Public sources'}</p></div></div><div class="evidence-metrics"><div><strong>${reviewLocation?.rating || '—'}</strong><span>Rating</span></div><div><strong>${reviewLocation?.count || '—'}</strong><span>Reviews</span></div><div><strong>${reviewLocation?.tone || 'Cross-location'}</strong><span>Main signal</span></div></div>${reviews.map((review) => `<div class="review-quote"><span class="platform ${review.platform.toLowerCase()}">${review.platform[0]}</span><p>“${review.text}”</p><b>${review.rating}★</b></div>`).join('')}</section><section class="evidence-section"><div class="evidence-heading"><span class="source-mark teal">02</span><div><h3>Top modeled products</h3><p>Revenue-ranked</p></div></div><div class="market-list">${leaders.map((product) => `<div><span>${product.name}</span><strong>${money.format(product.price * product.units * location.multiplier).replace('.00','')}</strong></div>`).join('')}</div></section>`;
@@ -226,9 +258,9 @@ function bindViewEvents() {
   document.querySelectorAll('[data-approve]').forEach((button) => button.addEventListener('click', () => approve(button.dataset.approve)));
   document.querySelectorAll('[data-run-playbook]').forEach((button) => button.addEventListener('click', () => { closeDrawer(); render('assistant'); setTimeout(runPlaybook, 180); }));
   document.querySelectorAll('[data-product]').forEach((button) => button.addEventListener('click', () => showToast(`${button.dataset.product} · product economics selected`)));
-  document.querySelectorAll('[data-prompt]').forEach((button) => button.addEventListener('click', () => askKernel(button.dataset.prompt)));
+  document.querySelectorAll('[data-prompt]').forEach((button) => button.addEventListener('click', () => askStoreline(button.dataset.prompt)));
   const chatForm = document.getElementById('chat-form');
-  if (chatForm) chatForm.addEventListener('submit', (event) => { event.preventDefault(); const input = document.getElementById('chat-input'); askKernel(input.value); input.value = ''; });
+  if (chatForm) chatForm.addEventListener('submit', (event) => { event.preventDefault(); const input = document.getElementById('chat-input'); askStoreline(input.value); input.value = ''; });
   const clearChat = document.getElementById('clear-chat');
   if (clearChat) clearChat.addEventListener('click', () => { state.chat = state.chat.slice(0, 1); renderChat(); });
   const runButton = document.getElementById('run-playbook');
@@ -244,7 +276,7 @@ function approve(id) {
 }
 
 function syncDecisionCounts() {
-  const remaining = KERNEL_DATA.recommendations.length - state.approvals.size;
+  const remaining = STORELINE_DATA.recommendations.length - state.approvals.size;
   document.getElementById('decision-count').textContent = remaining;
   const open = document.getElementById('open-decision-count');
   const approved = document.getElementById('approved-decision-count');
@@ -280,8 +312,9 @@ function showToast(message) {
 document.querySelectorAll('.nav-item').forEach((button) => button.addEventListener('click', () => render(button.dataset.view)));
 document.querySelectorAll('.close-drawer').forEach((button) => button.addEventListener('click', closeDrawer));
 backdrop.addEventListener('click', closeDrawer);
-document.getElementById('help-button').addEventListener('click', () => showToast('Kernel connects reviews, modeled pricing and market evidence into operating decisions.'));
+document.getElementById('help-button').addEventListener('click', () => showToast('Storeline retrieves reviews, modeled pricing and market evidence with source-level citations.'));
 document.getElementById('account-button').addEventListener('click', () => showToast('Tatte Bakery & Café · Boston intelligence layer'));
 document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeDrawer(); });
 
 render('today');
+loadRuntimeStatus();

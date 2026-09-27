@@ -9,18 +9,18 @@ export async function generateMetadata(): Promise<Metadata> {
   const origin = `${protocol}://${host}`;
 
   return {
-    title: "Kernel — Franchise Intelligence",
+    title: "Storeline — Franchise Intelligence",
     description: "Turn private sales, customer reviews, and market context into operational decisions for every location.",
     icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
     openGraph: {
-      title: "Kernel — Franchise Intelligence",
+      title: "Storeline — Franchise Intelligence",
       description: "Turn scattered signals into operating decisions.",
       type: "website",
-      images: [{ url: `${origin}/og.png`, width: 1200, height: 630, alt: "Kernel operational intelligence" }],
+      images: [{ url: `${origin}/og.png`, width: 1200, height: 630, alt: "Storeline operational intelligence" }],
     },
     twitter: {
       card: "summary_large_image",
-      title: "Kernel — Franchise Intelligence",
+      title: "Storeline — Franchise Intelligence",
       description: "Turn scattered signals into operating decisions.",
       images: [`${origin}/og.png`],
     },
