@@ -56,6 +56,9 @@ test("ships the six working product surfaces and grounded data layer", async () 
   assert.match(app, /AI sales synthesis/);
   assert.match(app, /AI review synthesis/);
   assert.match(app, /AI market synthesis/);
+  assert.match(app, /function bundledAnswer/);
+  assert.match(app, /retrieval: 'bundled'/);
+  assert.match(app, /Sources loaded/);
   assert.match(app, /Rotisserie Ema sold 800\+ Greek froyos in four hours/);
   assert.match(app, /Back Bay action plan/);
   assert.match(app, /View strengths & gaps/);
