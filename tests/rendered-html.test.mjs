@@ -50,6 +50,8 @@ test("ships the six working product surfaces and grounded data layer", async () 
   assert.match(css, /\.assistant-layout/);
   assert.match(api, /x-storeline-tenant/);
   assert.match(api, /\/v1\/responses/);
+  assert.match(api, /api\.anthropic\.com\/v1\/messages/);
+  assert.match(api, /claude-sonnet-5/);
   assert.match(api, /deterministicCalculations/);
   assert.match(api, /evaluation_cases/);
   assert.equal(JSON.parse(hosting).d1, "DB");

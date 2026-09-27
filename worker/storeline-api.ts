@@ -1,5 +1,7 @@
 type RuntimeEnv = {
   DB: D1Database;
+  ANTHROPIC_API_KEY?: string;
+  ANTHROPIC_MODEL?: string;
   OPENAI_API_KEY?: string;
   OPENAI_MODEL?: string;
 };
@@ -225,7 +227,35 @@ async function callOpenAI(env: RuntimeEnv, prompt: string) {
   if (!response.ok) throw new Error(`OpenAI Responses API returned ${response.status}`);
   const payload = await response.json() as { output_text?: string; output?: Array<{ content?: Array<{ type?: string; text?: string }> }> };
   const text = payload.output_text || payload.output?.flatMap((item) => item.content || []).filter((item) => item.type === "output_text").map((item) => item.text || "").join("\n");
-  return { text: text || "No grounded answer was returned.", model };
+  return { text: text || "No grounded answer was returned.", model, provider: "openai" };
+}
+
+async function callAnthropic(env: RuntimeEnv, prompt: string) {
+  if (!env.ANTHROPIC_API_KEY) return null;
+  const model = env.ANTHROPIC_MODEL || "claude-sonnet-5";
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-api-key": env.ANTHROPIC_API_KEY,
+      "anthropic-version": "2023-06-01",
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: 900,
+      system: "You are Storeline, an operating intelligence assistant for franchise owners. Answer only from the supplied evidence. Cite factual claims inline with source IDs in square brackets. Separate public observations from modeled product economics. Never invent a number. Keep the answer concise and operational.",
+      messages: [{ role: "user", content: prompt }],
+    }),
+  });
+  if (!response.ok) throw new Error(`Anthropic Messages API returned ${response.status}`);
+  const payload = await response.json() as { content?: Array<{ type?: string; text?: string }> };
+  const text = payload.content?.filter((item) => item.type === "text").map((item) => item.text || "").join("\n");
+  return { text: text || "No grounded answer was returned.", model, provider: "anthropic" };
+}
+
+async function callModel(env: RuntimeEnv, prompt: string) {
+  if (env.ANTHROPIC_API_KEY) return callAnthropic(env, prompt);
+  return callOpenAI(env, prompt);
 }
 
 async function status(db: D1Database, env: RuntimeEnv, tenantId: string) {
@@ -233,12 +263,14 @@ async function status(db: D1Database, env: RuntimeEnv, tenantId: string) {
   const products = await db.prepare("SELECT COUNT(*) AS count FROM products WHERE tenant_id = ?").bind(tenantId).first<{ count: number }>();
   const locationsCount = await db.prepare("SELECT COUNT(*) AS count FROM locations WHERE tenant_id = ?").bind(tenantId).first<{ count: number }>();
   const evals = await db.prepare("SELECT COUNT(*) AS count FROM evaluation_cases WHERE tenant_id = ?").bind(tenantId).first<{ count: number }>();
+  const modelProvider = env.ANTHROPIC_API_KEY ? "anthropic" : env.OPENAI_API_KEY ? "openai" : null;
   return json({
     product: "Storeline",
     tenant: tenantId,
     retrieval: "online",
-    model: env.OPENAI_API_KEY ? "connected" : "awaiting_api_key",
-    model_name: env.OPENAI_MODEL || "gpt-5.4-mini",
+    model: modelProvider ? "connected" : "awaiting_api_key",
+    model_provider: modelProvider,
+    model_name: modelProvider === "anthropic" ? env.ANTHROPIC_MODEL || "claude-sonnet-5" : env.OPENAI_MODEL || "gpt-5.4-mini",
     locations: locationsCount?.count || 0,
     products: products?.count || 0,
     evaluation_cases: evals?.count || 0,
@@ -274,9 +306,10 @@ async function ask(request: Request, db: D1Database, env: RuntimeEnv, tenantId: 
   let answer = fallbackAnswer(question, evidence, products, calculations);
   let mode = "retrieval";
   let model: string | null = null;
+  let provider: string | null = null;
   try {
-    const generated = await callOpenAI(env, buildGroundedPrompt(question, evidence, products, calculations));
-    if (generated) { answer = generated.text; mode = "llm"; model = generated.model; }
+    const generated = await callModel(env, buildGroundedPrompt(question, evidence, products, calculations));
+    if (generated) { answer = generated.text; mode = "llm"; model = generated.model; provider = generated.provider; }
   } catch (error) {
     console.error("Storeline model adapter failed", error);
     mode = "retrieval_fallback";
@@ -284,7 +317,7 @@ async function ask(request: Request, db: D1Database, env: RuntimeEnv, tenantId: 
   const citations = evidence.map((item) => ({ id: item.id, title: item.title, source_type: item.source_type, source_name: item.source_name, source_url: item.source_url, location_id: item.location_id, excerpt: item.content }));
   const runId = crypto.randomUUID();
   await db.prepare("INSERT INTO ask_runs (id, tenant_id, question, answer, citations_json, mode, model) VALUES (?, ?, ?, ?, ?, ?, ?)").bind(runId, tenantId, question, answer, JSON.stringify(citations), mode, model).run();
-  return json({ run_id: runId, answer, mode, model, citations, calculations, retrieved_count: citations.length });
+  return json({ run_id: runId, answer, mode, model, provider, citations, calculations, retrieved_count: citations.length });
 }
 
 export async function handleStorelineApi(request: Request, env: RuntimeEnv): Promise<Response | null> {

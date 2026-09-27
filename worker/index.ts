@@ -6,6 +6,8 @@ import { handleStorelineApi } from "./storeline-api";
 interface Env {
   ASSETS: Fetcher;
   DB: D1Database;
+  ANTHROPIC_API_KEY?: string;
+  ANTHROPIC_MODEL?: string;
   OPENAI_API_KEY?: string;
   OPENAI_MODEL?: string;
   IMAGES: {
