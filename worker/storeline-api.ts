@@ -270,7 +270,7 @@ async function status(db: D1Database, env: RuntimeEnv, tenantId: string) {
     retrieval: "online",
     model: modelProvider ? "connected" : "awaiting_api_key",
     model_provider: modelProvider,
-    model_name: modelProvider === "anthropic" ? env.ANTHROPIC_MODEL || "claude-sonnet-5" : env.OPENAI_MODEL || "gpt-5.4-mini",
+    model_name: modelProvider === "openai" ? env.OPENAI_MODEL || "gpt-5.4-mini" : env.ANTHROPIC_MODEL || "claude-sonnet-5",
     locations: locationsCount?.count || 0,
     products: products?.count || 0,
     evaluation_cases: evals?.count || 0,
