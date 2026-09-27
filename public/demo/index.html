@@ -33,6 +33,7 @@
           <button class="nav-item" data-view="pricing"><span class="nav-icon">$</span><span>Sales</span></button>
           <button class="nav-item" data-view="market"><span class="nav-icon">◎</span><span>Market</span></button>
           <button class="nav-item" data-view="next"><span class="nav-icon">→</span><span>Next steps</span><span class="nav-count" id="decision-count">4</span></button>
+          <button class="nav-item" data-view="workspace"><span class="nav-icon">▦</span><span>Workspace</span><span class="nav-count workspace-count">1</span></button>
           <button class="nav-item" data-view="assistant"><span class="nav-icon">✦</span><span>Ask Storeline</span></button>
         </nav>
         <div class="sidebar-bottom">
@@ -177,6 +178,73 @@
             </div>
             <div class="artifact-stack" id="artifact-stack" hidden></div>
             <button class="primary-button run-playbook" id="run-playbook">Run the froyo playbook</button>
+          </aside>
+        </div>
+      </section>
+    </template>
+
+    <template id="workspace-template">
+      <section class="page workspace-page">
+        <div class="page-heading compact"><div><span class="eyebrow">Agent execution workspace</span><h1>Greek froyo launch package.</h1><p>Everything Storeline created from the recommendation—campaign, operating plan and measurement—is collected here for approval.</p></div><span class="workspace-package-status"><i></i>Package ready</span></div>
+
+        <div class="workspace-kpis">
+          <article><span>Launch window</span><strong>14 days</strong><small>Back Bay + Pier 4</small></article>
+          <article><span>Target price</span><strong>$7.50</strong><small>68% modeled margin</small></article>
+          <article><span>Primary audience</span><strong>18–34</strong><small>Afternoon café visitors</small></article>
+          <article><span>Approval gate</span><strong id="workspace-approval-kpi">1 open</strong><small>Marketing owner</small></article>
+        </div>
+
+        <section class="workspace-run panel">
+          <div class="workspace-run-head"><div><span class="eyebrow">Storeline agent run</span><h2>Recommendation → launch-ready work</h2></div><span>4 of 4 complete</span></div>
+          <div class="workspace-run-steps">
+            <div><i>✓</i><span><b>Research</b><small>5 nearby winners</small></span></div><em>→</em>
+            <div><i>✓</i><span><b>Offer</b><small>Price + margin</small></span></div><em>→</em>
+            <div><i>✓</i><span><b>Campaign</b><small>Creative + copy</small></span></div><em>→</em>
+            <div><i>✓</i><span><b>Operations</b><small>Checklist + scorecard</small></span></div>
+          </div>
+        </section>
+
+        <div class="workspace-grid">
+          <main class="workspace-main">
+            <section class="marketing-agent panel" id="campaign-kit">
+              <div class="marketing-agent-head"><div class="agent-title"><span class="marketing-agent-avatar">✦</span><div><span class="eyebrow">AI marketing agent</span><h2>Instagram launch campaign</h2></div></div><span class="marketing-status" id="marketing-status">Draft ready</span></div>
+              <p class="marketing-summary">Storeline converted the market signal, customer language and offer economics into a launch-ready social campaign. Approval schedules the demo campaign and records the decision.</p>
+              <div class="campaign-builder">
+                <article class="instagram-preview" aria-label="Instagram campaign preview">
+                  <header><span class="ig-avatar">T</span><p><b>@tattebakery</b><small>Preview account · Back Bay</small></p><span>•••</span></header>
+                  <div class="ig-creative"><img src="/campaign/greek-froyo-instagram.png" alt="Greek frozen yogurt with pistachio, honey and iced coffee" /><div class="creative-copy"><span>NEW AFTER 2 PM</span><strong>Greek froyo,<br>the Tatte way.</strong><small>Back Bay + Pier 4 · 14 days only</small></div></div>
+                  <footer><div><span>♡</span><span>◯</span><span>⌁</span><b>▢</b></div><p><strong>@tattebakery</strong> <span id="instagram-caption">A lighter afternoon ritual: thick Greek froyo, pistachio and honey—made for the iced-coffee hour.</span></p><small>#GreekFroyo #BostonEats #AfternoonAtTatte</small></footer>
+                </article>
+
+                <div class="campaign-controls">
+                  <div class="campaign-control-head"><span class="eyebrow">Agent decisions</span><b>Grounded in 12 signals</b></div>
+                  <dl class="campaign-plan">
+                    <div><dt>Objective</dt><dd>Drive afternoon trial and measure drink attach rate</dd></div>
+                    <div><dt>Audience</dt><dd>Boston café visitors, ages 18–34, within 2.5 miles</dd></div>
+                    <div><dt>Placement</dt><dd>Instagram feed + story · organic first</dd></div>
+                    <div><dt>Proposed time</dt><dd id="marketing-schedule">Monday · 1:35 PM ET</dd></div>
+                    <div><dt>Creative angle</dt><dd id="marketing-angle">A lighter afternoon ritual</dd></div>
+                  </dl>
+                  <div class="campaign-evidence"><span><i class="coral"></i>Reviews: lighter options</span><span><i class="teal"></i>Sales: iced-drink attach</span><span><i class="blue"></i>Market: Greek froyo momentum</span></div>
+                  <div class="campaign-actions"><button class="primary-button" id="approve-marketing">Approve & schedule</button><button class="secondary-button" id="regenerate-marketing">Generate another angle</button><button class="text-button" id="copy-marketing-caption">Copy caption</button></div>
+                  <p class="approval-note" id="marketing-approval-note">Requires one owner approval. Instagram connection is represented as a demo workflow.</p>
+                </div>
+              </div>
+            </section>
+
+            <section class="workspace-detail-grid">
+              <article class="panel workspace-detail" id="store-checklist"><div class="detail-head"><span class="source-mark teal">✓</span><div><span class="eyebrow">Store checklist</span><h3>Ready for managers</h3></div></div><ul><li><span>01</span>Confirm 40-cup opening par at each pilot location</li><li><span>02</span>Place counter card beside afternoon iced drinks</li><li><span>03</span>Log hourly units, attach rate and stockouts</li></ul></article>
+              <article class="panel workspace-detail" id="pilot-scorecard"><div class="detail-head"><span class="source-mark blue">↗</span><div><span class="eyebrow">Pilot scorecard</span><h3>Decision rule defined</h3></div></div><div class="scorecard-row"><span>Attach rate<b>8% target</b></span><span>Repeat<b>20% target</b></span><span>Margin<b>≥65%</b></span></div><p>Expand if two of three targets hold without increasing afternoon wait time.</p></article>
+            </section>
+          </main>
+
+          <aside class="workspace-artifacts panel" id="market-brief">
+            <div><span class="eyebrow">Launch package</span><h2>All deliverables</h2><p>Generated from the approved Greek-froyo recommendation.</p></div>
+            <button data-workspace-artifact="market-brief"><span class="artifact-icon">01</span><span><b>Market brief</b><small>5 competitors · 3 source links</small></span><i>Ready</i></button>
+            <button data-workspace-artifact="campaign-kit" class="selected"><span class="artifact-icon">02</span><span><b>Campaign kit</b><small>Instagram · story · caption</small></span><i>Open</i></button>
+            <button data-workspace-artifact="store-checklist"><span class="artifact-icon">03</span><span><b>Store checklist</b><small>Prep · staffing · launch</small></span><i>Ready</i></button>
+            <button data-workspace-artifact="pilot-scorecard"><span class="artifact-icon">04</span><span><b>Pilot scorecard</b><small>Attach · repeat · margin</small></span><i>Ready</i></button>
+            <div class="workspace-log"><span class="eyebrow">Agent activity</span><p><i></i><b>Campaign creative generated</b><small>Using review, sales and market evidence</small></p><p><i></i><b>Launch package assembled</b><small>Four artifacts ready for approval</small></p></div>
           </aside>
         </div>
       </section>

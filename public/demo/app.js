@@ -20,14 +20,21 @@ const state = {
   approvals: new Set(),
   agentRunning: false,
   agentComplete: false,
+  marketingRevision: 0,
+  marketingStatus: 'draft',
   runtime: null,
   chat: [
     { role: 'assistant', text: 'I retrieve across reviews, modeled sales and market evidence — then turn the grounded answer into an operating playbook.', sources: ['Evidence index', 'Structured sales tools', 'Source-level citations'] },
   ],
 };
 
-const labels = { today: 'Today', reviews: 'Reviews', pricing: 'Sales', market: 'Market', next: 'Next steps', assistant: 'Ask Storeline' };
+const labels = { today: 'Today', reviews: 'Reviews', pricing: 'Sales', market: 'Market', next: 'Next steps', workspace: 'Workspace', assistant: 'Ask Storeline' };
 const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+const marketingVariants = [
+  { angle: 'A lighter afternoon ritual', caption: 'A lighter afternoon ritual: thick Greek froyo, pistachio and honey—made for the iced-coffee hour.', schedule: 'Monday · 1:35 PM ET' },
+  { angle: 'Your iced coffee found its match', caption: 'Your iced coffee found its match. Greek froyo with pistachio and honey lands after 2 PM at Back Bay and Pier 4.', schedule: 'Tuesday · 2:05 PM ET' },
+  { angle: 'Fourteen days. Two cafés. One cool new ritual.', caption: 'Fourteen days. Two cafés. One cool new ritual. Try our Greek froyo pilot at Back Bay and Pier 4 while it lasts.', schedule: 'Thursday · 1:45 PM ET' },
+];
 
 function sourceUrl(key) { return STORELINE_DATA.sources[key] || '#'; }
 function stars(rating) { return '★'.repeat(rating) + '☆'.repeat(5 - rating); }
@@ -53,6 +60,7 @@ function render(view = state.view) {
   if (view === 'pricing') renderPricing();
   if (view === 'market') renderMarket();
   if (view === 'next') renderRecommendations();
+  if (view === 'workspace') renderWorkspace();
   if (view === 'assistant') renderAssistant();
   bindViewEvents();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -193,6 +201,38 @@ function renderAssistant() {
   updateRuntimeUI();
 }
 
+function renderWorkspace() {
+  const variant = marketingVariants[state.marketingRevision % marketingVariants.length];
+  const caption = document.getElementById('instagram-caption');
+  const angle = document.getElementById('marketing-angle');
+  const schedule = document.getElementById('marketing-schedule');
+  const status = document.getElementById('marketing-status');
+  const approve = document.getElementById('approve-marketing');
+  const note = document.getElementById('marketing-approval-note');
+  const kpi = document.getElementById('workspace-approval-kpi');
+  if (caption) caption.textContent = variant.caption;
+  if (angle) angle.textContent = variant.angle;
+  if (schedule) schedule.textContent = variant.schedule;
+  if (state.marketingStatus === 'scheduled') {
+    status.textContent = 'Scheduled';
+    status.classList.add('scheduled');
+    approve.textContent = 'Scheduled ✓';
+    approve.disabled = true;
+    note.textContent = `Approved by owner · queued for ${variant.schedule} in the demo workflow.`;
+    kpi.textContent = '0 open';
+  }
+}
+
+function focusWorkspaceArtifact(id) {
+  const target = document.getElementById(id);
+  if (!target) return;
+  target.classList.remove('workspace-focus');
+  requestAnimationFrame(() => {
+    target.classList.add('workspace-focus');
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+}
+
 function renderChat() {
   const thread = document.getElementById('chat-thread');
   if (!thread) return;
@@ -291,9 +331,13 @@ function showArtifacts() {
   const button = document.getElementById('run-playbook');
   if (!stack) return;
   stack.hidden = false;
-  stack.innerHTML = '<span class="eyebrow">Launch package</span><button data-artifact="Market brief"><b>Market brief</b><small>5 competitors · 3 source links</small><i>View →</i></button><button data-artifact="Campaign kit"><b>Campaign kit</b><small>Email · social · counter card</small><i>View →</i></button><button data-artifact="Store checklist"><b>Store checklist</b><small>Prep · staffing · launch sequence</small><i>View →</i></button><button data-artifact="Pilot scorecard"><b>Pilot scorecard</b><small>Attach rate · repeat · margin</small><i>View →</i></button>';
+  stack.innerHTML = '<span class="eyebrow">Launch package</span><button data-open-workspace="market-brief"><b>Market brief</b><small>5 competitors · 3 source links</small><i>View →</i></button><button data-open-workspace="campaign-kit"><b>Campaign kit</b><small>Instagram · story · caption</small><i>View →</i></button><button data-open-workspace="store-checklist"><b>Store checklist</b><small>Prep · staffing · launch sequence</small><i>View →</i></button><button data-open-workspace="pilot-scorecard"><b>Pilot scorecard</b><small>Attach rate · repeat · margin</small><i>View →</i></button>';
   if (button) button.hidden = true;
-  stack.querySelectorAll('[data-artifact]').forEach((item) => item.addEventListener('click', () => showToast(`${item.dataset.artifact} opened in the launch workspace.`)));
+  stack.querySelectorAll('[data-open-workspace]').forEach((item) => item.addEventListener('click', () => {
+    const artifact = item.dataset.openWorkspace;
+    render('workspace');
+    setTimeout(() => focusWorkspaceArtifact(artifact), 120);
+  }));
 }
 
 function recommendationDrawer(id) {
@@ -339,6 +383,33 @@ function bindViewEvents() {
   document.querySelectorAll('[data-run-playbook]').forEach((button) => button.addEventListener('click', () => { closeDrawer(); render('assistant'); setTimeout(runPlaybook, 180); }));
   document.querySelectorAll('[data-product]').forEach((button) => button.addEventListener('click', () => showToast(`${button.dataset.product} · product economics selected`)));
   document.querySelectorAll('[data-prompt]').forEach((button) => button.addEventListener('click', () => askStoreline(button.dataset.prompt)));
+  document.querySelectorAll('[data-open-workspace]').forEach((button) => button.addEventListener('click', () => {
+    const artifact = button.dataset.openWorkspace;
+    render('workspace');
+    setTimeout(() => focusWorkspaceArtifact(artifact), 120);
+  }));
+  document.querySelectorAll('[data-workspace-artifact]').forEach((button) => button.addEventListener('click', () => focusWorkspaceArtifact(button.dataset.workspaceArtifact)));
+  const approveMarketing = document.getElementById('approve-marketing');
+  if (approveMarketing) approveMarketing.addEventListener('click', () => {
+    state.marketingStatus = 'scheduled';
+    render('workspace');
+    setTimeout(() => focusWorkspaceArtifact('campaign-kit'), 120);
+    showToast('Instagram campaign approved and scheduled in the demo workflow.');
+  });
+  const regenerateMarketing = document.getElementById('regenerate-marketing');
+  if (regenerateMarketing) regenerateMarketing.addEventListener('click', () => {
+    state.marketingRevision = (state.marketingRevision + 1) % marketingVariants.length;
+    state.marketingStatus = 'draft';
+    render('workspace');
+    setTimeout(() => focusWorkspaceArtifact('campaign-kit'), 120);
+    showToast('Marketing agent generated a new campaign angle.');
+  });
+  const copyCaption = document.getElementById('copy-marketing-caption');
+  if (copyCaption) copyCaption.addEventListener('click', async () => {
+    const captionText = marketingVariants[state.marketingRevision % marketingVariants.length].caption;
+    try { await navigator.clipboard.writeText(`${captionText} #GreekFroyo #BostonEats #AfternoonAtTatte`); showToast('Instagram caption copied.'); }
+    catch { showToast('Caption ready: select the post copy to copy it.'); }
+  });
   const chatForm = document.getElementById('chat-form');
   if (chatForm) chatForm.addEventListener('submit', (event) => { event.preventDefault(); const input = document.getElementById('chat-input'); askStoreline(input.value); input.value = ''; });
   const clearChat = document.getElementById('clear-chat');

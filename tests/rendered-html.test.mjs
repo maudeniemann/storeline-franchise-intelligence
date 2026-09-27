@@ -23,7 +23,7 @@ test("server-renders the Storeline application shell", async () => {
   assert.match(html, /title="Storeline franchise intelligence"/i);
 });
 
-test("ships the six working product surfaces and grounded data layer", async () => {
+test("ships the seven working product surfaces and grounded data layer", async () => {
   const [page, index, app, data, css, api, hosting] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../public/demo/index.html", import.meta.url), "utf8"),
@@ -35,7 +35,7 @@ test("ships the six working product surfaces and grounded data layer", async () 
   ]);
 
   assert.match(page, /src="\/demo\/index\.html"/);
-  for (const view of ["today", "reviews", "pricing", "market", "next", "assistant"]) {
+  for (const view of ["today", "reviews", "pricing", "market", "next", "workspace", "assistant"]) {
     assert.match(index, new RegExp(`data-view="${view}"`));
     assert.match(index, new RegExp(`id="${view}-template"`));
   }
@@ -43,6 +43,9 @@ test("ships the six working product surfaces and grounded data layer", async () 
   assert.match(index, /\/brand\/storeline-mark\.svg/);
   assert.match(index, /\/brand\/storeline-favicon\.svg/);
   assert.match(index, /\/brand\/site\.webmanifest/);
+  assert.match(index, /\/campaign\/greek-froyo-instagram\.png/);
+  assert.match(index, /AI marketing agent/);
+  assert.match(index, /Approve & schedule/);
   assert.match(index, /name="theme-color" content="#075d67"/);
   assert.match(index, /property="og:site_name" content="Storeline"/);
   assert.match(index, /<span>Sales<\/span>/);
@@ -71,6 +74,8 @@ test("ships the six working product surfaces and grounded data layer", async () 
   assert.match(data, /\/menu\/cold-brew\.jpg/);
   assert.match(data, /Pilot concept — not on the current menu/);
   assert.match(app, /function runPlaybook\(/);
+  assert.match(app, /function renderWorkspace\(/);
+  assert.match(app, /marketingVariants/);
   assert.match(app, /function askStoreline\(/);
   assert.match(app, /fetch\(['"]\/api\/ask['"]/);
   assert.match(app, /fetch\(['"]\/api\/status['"]/);
@@ -115,4 +120,8 @@ test("bundles Storeline browser and product brand assets", async () => {
     access(new URL("../public/brand/site.webmanifest", import.meta.url)),
     access(new URL("../public/og.png", import.meta.url)),
   ]);
+});
+
+test("bundles the agentic marketing campaign creative", async () => {
+  await access(new URL("../public/campaign/greek-froyo-instagram.png", import.meta.url));
 });

@@ -13,6 +13,7 @@ Storeline turns sales, customer reviews, and market context into operating decis
 - **Sales:** product mix, menu photography, modeled unit economics, and AI synthesis
 - **Market:** macro signals, competitor evidence, and AI synthesis
 - **Next steps:** evidence-linked decisions and executable playbooks
+- **Workspace:** launch packages, AI-generated campaign creative, approvals, store checklists, and pilot scorecards
 - **Ask Storeline:** retrieval over the connected evidence layer, with optional OpenAI or Anthropic generation
 
 The public evidence layer uses linked market sources, public restaurant information, and review excerpts supplied for the prototype. Sales volumes and margins are curated scenario models for the product demonstration. Storeline is an independent prototype and is not affiliated with Tatte Bakery & Café.
@@ -68,6 +69,7 @@ Never commit environment files or API keys. The repository ignores `.env*` files
 app/                 Application shell and metadata
 public/demo/         Interactive Storeline interface
 public/brand/        Logo, favicon, and web manifest
+public/campaign/     Generated campaign creative used by the marketing agent
 public/menu/         Menu photography used by the sales catalog
 worker/              Evidence retrieval, model routing, and API endpoints
 db/ and drizzle/     D1 schema and migrations
