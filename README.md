@@ -6,7 +6,19 @@ Storeline turns sales, customer reviews, and market context into operating decis
 
 ![Storeline — operational intelligence for hospitality groups](public/og.png)
 
-## What the demo includes
+## The problem
+
+Franchise owners and regional hospitality operators have the information they need, but it is split across POS reports, public reviews, market research, and competitor activity. Teams spend hours reconciling those signals and still struggle to decide what to change at a specific location.
+
+Storeline gives the operator one evidence-linked view of what happened, why it matters, and what to do next.
+
+## Customer and business case
+
+The primary user is a franchise owner, regional operator, or operations lead responsible for multiple café or restaurant locations. The buyer is the hospitality group or franchise organization.
+
+They would pay for Storeline to replace recurring manual analysis, surface revenue and service risks earlier, and turn promising ideas into measurable location-level tests. It makes weekly operating reviews faster and makes each recommendation traceable to sales, customer, and market evidence.
+
+## How it works
 
 - **Today:** a prioritized operating brief across locations
 - **Reviews:** location-level comments, themes, and AI synthesis
@@ -16,7 +28,28 @@ Storeline turns sales, customer reviews, and market context into operating decis
 - **Workspace:** launch packages, AI-generated campaign creative, approvals, store checklists, and pilot scorecards
 - **Ask Storeline:** retrieval over the connected evidence layer, with optional OpenAI or Anthropic generation
 
-The public evidence layer uses linked market sources, public restaurant information, and review excerpts supplied for the prototype. Sales volumes and margins are curated scenario models for the product demonstration. Storeline is an independent prototype and is not affiliated with Tatte Bakery & Café.
+## Operational fit
+
+Storeline sits above the tools an operator already uses. POS transactions supply product and location performance; public reviews supply customer language and recurring service themes; market and competitor sources supply external context. The owner receives a daily brief, explores the evidence by tab, approves a recommended action, and tracks the resulting pilot in the Workspace.
+
+The live demo follows one complete workflow: identify Greek-froyo demand, connect it to sales and review signals, generate a campaign and operating plan, and approve the launch.
+
+## Where AI matters
+
+AI retrieves evidence across the three data layers, synthesizes cross-source patterns, answers natural-language questions with supporting context, and turns a recommendation into an executable launch package. The package includes the offer, campaign creative, operating checklist, and pilot scorecard. Rules and dashboards alone can display the inputs; the model is what connects them into a grounded decision and creates the follow-through artifacts.
+
+## What is real and what is modeled
+
+- **Real:** the working seven-tab product, public deployment, source-linked market research, supplied public-review excerpts, menu imagery, evidence navigation, approval interactions, and generated campaign creative.
+- **Modeled:** POS transaction volumes, unit margins, and forecast impact are curated scenario data because private restaurant sales data was not available during the build.
+- **Represented integration:** the approval flow demonstrates the handoff to Instagram; it does not publish to a live brand account.
+- **Model runtime:** the repository includes OpenAI and Anthropic routing. Without a provider key, the public build uses deterministic grounded responses so the demo remains reliable.
+
+Storeline is an independent prototype and is not affiliated with Tatte Bakery & Café.
+
+## Prior work
+
+None. Storeline was built during Test Flight 2026 using public libraries, models, and APIs.
 
 ## Architecture
 
