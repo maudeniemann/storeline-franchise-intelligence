@@ -21,7 +21,7 @@
         <nav class="main-nav" aria-label="Primary navigation">
           <button class="nav-item active" data-view="today"><span class="nav-icon">⌂</span><span>Today</span></button>
           <button class="nav-item" data-view="reviews"><span class="nav-icon">★</span><span>Reviews</span></button>
-          <button class="nav-item" data-view="pricing"><span class="nav-icon">$</span><span>Pricing</span></button>
+          <button class="nav-item" data-view="pricing"><span class="nav-icon">$</span><span>Sales</span></button>
           <button class="nav-item" data-view="market"><span class="nav-icon">◎</span><span>Market</span></button>
           <button class="nav-item" data-view="next"><span class="nav-icon">→</span><span>Next steps</span><span class="nav-count" id="decision-count">4</span></button>
           <button class="nav-item" data-view="assistant"><span class="nav-icon">✦</span><span>Ask Storeline</span></button>
@@ -52,10 +52,10 @@
             <div class="hero-meta"><span class="signal-chip opportunity">Growth opportunity</span><span>86% confidence · Back Bay + Pier 4</span></div>
             <h2>Test Greek frozen yogurt beside afternoon iced drinks.</h2>
             <p>Current category momentum, nearby Greek-food competition and Tatte’s existing yogurt language support a tightly measured 14-day pilot.</p>
-            <div class="source-proof"><span><i class="dot coral"></i><b>Reviews</b> lighter options + seating</span><span><i class="dot teal"></i><b>Pricing</b> 68% modeled margin</span><span><i class="dot blue"></i><b>Market</b> #froyo posts +16%</span></div>
+            <div class="source-proof"><span><i class="dot coral"></i><b>Reviews</b> lighter options + seating</span><span><i class="dot teal"></i><b>Sales</b> 68% modeled margin</span><span><i class="dot blue"></i><b>Market</b> #froyo posts +16%</span></div>
             <div class="hero-actions"><button class="primary-button" data-open-recommendation="froyo">Review evidence</button><button class="secondary-button" data-view-jump="next">See all next steps</button></div>
           </div>
-          <div class="signal-orbit" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="signal-node reviews-node">REVIEWS</div><div class="signal-node price-node">PRICING</div><div class="signal-node market-node">MARKET</div><div class="storeline-node"><span class="brand-mark"><i></i><i></i><i></i><i></i></span><b>STORELINE</b></div></div>
+          <div class="signal-orbit" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="signal-node reviews-node">REVIEWS</div><div class="signal-node price-node">SALES</div><div class="signal-node market-node">MARKET</div><div class="storeline-node"><span class="brand-mark"><i></i><i></i><i></i><i></i></span><b>STORELINE</b></div></div>
         </article>
 
         <div class="metric-grid">
@@ -83,10 +83,10 @@
 
     <template id="pricing-template">
       <section class="page">
-        <div class="page-heading compact"><div><span class="eyebrow">Modeled product economics</span><h1>Pricing and product mix, by location.</h1><p>A curated operating model for the pitch: prices, unit mix, margins and growth signals.</p></div><span class="scenario-badge">Scenario pricing</span></div>
+        <div class="page-heading compact"><div><span class="eyebrow">Modeled sales data</span><h1>Sales performance and product mix, by location.</h1><p>A Toast-style operating view of modeled revenue, units, prices, margins and growth signals.</p></div><span class="scenario-badge">Modeled sales</span></div>
         <div class="filter-row"><div class="filter-scroller" id="pricing-location-tabs"></div><div class="filter-scroller compact-filters" id="pricing-category-tabs"></div></div>
         <div class="metric-grid" id="pricing-kpis"></div>
-        <section class="panel pricing-panel"><div class="panel-heading"><div><span class="eyebrow">Product detail</span><h3 id="pricing-table-title">All-location mix</h3></div><span class="period-label">Modeled weekly units</span></div><div class="product-table"><div class="product-row product-head"><span>Product</span><span>Category</span><span>Price</span><span>Units</span><span>Margin</span><span>Trend</span></div><div id="product-table-body"></div></div></section>
+        <section class="panel pricing-panel"><div class="panel-heading"><div><span class="eyebrow">Product sales</span><h3 id="pricing-table-title">All-location mix</h3></div><span class="period-label">Modeled weekly performance</span></div><div class="product-table"><div class="product-row product-head"><span>Product</span><span>Category</span><span>Price</span><span>Units</span><span>Margin</span><span>Trend</span></div><div id="product-table-body"></div></div></section>
       </section>
     </template>
 
@@ -112,10 +112,10 @@
         <div class="runtime-strip" id="runtime-strip"><span>Loading evidence coverage…</span></div>
         <div class="assistant-layout">
           <section class="assistant-chat panel">
-            <div class="assistant-header"><div class="assistant-avatar">S</div><div><strong>Storeline Assistant</strong><span id="assistant-status-line">Reviews · Pricing · Market</span></div><button class="text-button" id="clear-chat">Clear</button></div>
+            <div class="assistant-header"><div class="assistant-avatar">S</div><div><strong>Storeline Assistant</strong><span id="assistant-status-line">Reviews · Sales · Market</span></div><button class="text-button" id="clear-chat">Clear</button></div>
             <div class="chat-thread" id="chat-thread"></div>
-            <div class="prompt-chips"><button data-prompt="Why should we test Greek frozen yogurt?">Why froyo?</button><button data-prompt="Which location should run the pilot first?">Best pilot location?</button><button data-prompt="What pricing risks should I watch?">Pricing risks?</button></div>
-            <form class="chat-compose" id="chat-form"><input id="chat-input" autocomplete="off" placeholder="Ask about reviews, pricing, competitors or the next move…"/><button type="submit" aria-label="Send question">↑</button></form>
+            <div class="prompt-chips"><button data-prompt="Why should we test Greek frozen yogurt?">Why froyo?</button><button data-prompt="Which location should run the pilot first?">Best pilot location?</button><button data-prompt="What sales and pricing risks should I watch?">Sales risks?</button></div>
+            <form class="chat-compose" id="chat-form"><input id="chat-input" autocomplete="off" placeholder="Ask about reviews, sales, competitors or the next move…"/><button type="submit" aria-label="Send question">↑</button></form>
           </section>
           <aside class="agent-workspace panel">
             <div class="agent-workspace-head"><div><span class="eyebrow">Agentic playbook</span><h2>Greek froyo launch</h2></div><span class="workflow-status" id="workflow-status">Ready</span></div>

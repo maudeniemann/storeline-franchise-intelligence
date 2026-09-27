@@ -20,11 +20,11 @@ const state = {
   agentComplete: false,
   runtime: null,
   chat: [
-    { role: 'assistant', text: 'I retrieve across reviews, modeled product economics and market evidence — then turn the grounded answer into an operating playbook.', sources: ['Evidence index', 'Structured product tools', 'Source-level citations'] },
+    { role: 'assistant', text: 'I retrieve across reviews, modeled sales and market evidence — then turn the grounded answer into an operating playbook.', sources: ['Evidence index', 'Structured sales tools', 'Source-level citations'] },
   ],
 };
 
-const labels = { today: 'Today', reviews: 'Reviews', pricing: 'Pricing', market: 'Market', next: 'Next steps', assistant: 'Ask Storeline' };
+const labels = { today: 'Today', reviews: 'Reviews', pricing: 'Sales', market: 'Market', next: 'Next steps', assistant: 'Ask Storeline' };
 const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
 
 function sourceUrl(key) { return STORELINE_DATA.sources[key] || '#'; }
@@ -242,7 +242,7 @@ function locationDrawer(id) {
   const leaders = [...STORELINE_DATA.products].sort((a, b) => (b.units * b.price) - (a.units * a.price)).slice(0, 5);
   drawerKicker.textContent = 'Location profile';
   drawerTitle.textContent = location.name;
-  drawerBody.innerHTML = `<div class="recommendation-brief"><span class="signal-chip opportunity">Product mix</span><p>${location.note}. Select this location in Pricing to see adjusted units and sales.</p></div><section class="evidence-section"><div class="evidence-heading"><span class="source-mark coral">01</span><div><h3>Public review profile</h3><p>${reviewLocation ? reviewLocation.platform : 'Public sources'}</p></div></div><div class="evidence-metrics"><div><strong>${reviewLocation?.rating || '—'}</strong><span>Rating</span></div><div><strong>${reviewLocation?.count || '—'}</strong><span>Reviews</span></div><div><strong>${reviewLocation?.tone || 'Cross-location'}</strong><span>Main signal</span></div></div>${reviews.map((review) => `<div class="review-quote"><span class="platform ${review.platform.toLowerCase()}">${review.platform[0]}</span><p>“${review.text}”</p><b>${review.rating}★</b></div>`).join('')}</section><section class="evidence-section"><div class="evidence-heading"><span class="source-mark teal">02</span><div><h3>Top modeled products</h3><p>Revenue-ranked</p></div></div><div class="market-list">${leaders.map((product) => `<div><span>${product.name}</span><strong>${money.format(product.price * product.units * location.multiplier).replace('.00','')}</strong></div>`).join('')}</div></section>`;
+  drawerBody.innerHTML = `<div class="recommendation-brief"><span class="signal-chip opportunity">Product mix</span><p>${location.note}. Select this location in Sales to see adjusted units and revenue.</p></div><section class="evidence-section"><div class="evidence-heading"><span class="source-mark coral">01</span><div><h3>Public review profile</h3><p>${reviewLocation ? reviewLocation.platform : 'Public sources'}</p></div></div><div class="evidence-metrics"><div><strong>${reviewLocation?.rating || '—'}</strong><span>Rating</span></div><div><strong>${reviewLocation?.count || '—'}</strong><span>Reviews</span></div><div><strong>${reviewLocation?.tone || 'Cross-location'}</strong><span>Main signal</span></div></div>${reviews.map((review) => `<div class="review-quote"><span class="platform ${review.platform.toLowerCase()}">${review.platform[0]}</span><p>“${review.text}”</p><b>${review.rating}★</b></div>`).join('')}</section><section class="evidence-section"><div class="evidence-heading"><span class="source-mark teal">02</span><div><h3>Top modeled products</h3><p>Revenue-ranked</p></div></div><div class="market-list">${leaders.map((product) => `<div><span>${product.name}</span><strong>${money.format(product.price * product.units * location.multiplier).replace('.00','')}</strong></div>`).join('')}</div></section>`;
   drawerFooter.innerHTML = '<button class="secondary-button close-drawer">Close</button>';
   openDrawer();
 }
@@ -312,7 +312,7 @@ function showToast(message) {
 document.querySelectorAll('.nav-item').forEach((button) => button.addEventListener('click', () => render(button.dataset.view)));
 document.querySelectorAll('.close-drawer').forEach((button) => button.addEventListener('click', closeDrawer));
 backdrop.addEventListener('click', closeDrawer);
-document.getElementById('help-button').addEventListener('click', () => showToast('Storeline retrieves reviews, modeled pricing and market evidence with source-level citations.'));
+document.getElementById('help-button').addEventListener('click', () => showToast('Storeline retrieves reviews, modeled sales and market evidence with source-level citations.'));
 document.getElementById('account-button').addEventListener('click', () => showToast('Tatte Bakery & Café · Boston intelligence layer'));
 document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeDrawer(); });
 

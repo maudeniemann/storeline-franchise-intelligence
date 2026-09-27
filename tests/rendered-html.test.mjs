@@ -40,6 +40,8 @@ test("ships the six working product surfaces and grounded data layer", async () 
     assert.match(index, new RegExp(`id="${view}-template"`));
   }
   assert.match(index, /Ask anything\. Then turn the answer into work\./);
+  assert.match(index, /<span>Sales<\/span>/);
+  assert.match(index, /Sales performance and product mix, by location\./);
   assert.match(app, /function runPlaybook\(/);
   assert.match(app, /function askStoreline\(/);
   assert.match(app, /fetch\(['"]\/api\/ask['"]/);
