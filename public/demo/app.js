@@ -218,7 +218,7 @@ function renderWorkspace() {
     status.classList.add('scheduled');
     approve.textContent = 'Scheduled ✓';
     approve.disabled = true;
-    note.textContent = `Approved by owner · queued for ${variant.schedule} in the demo workflow.`;
+    note.textContent = `Approved by owner · queued for ${variant.schedule} in the marketing workflow.`;
     kpi.textContent = '0 open';
   }
 }
@@ -394,7 +394,7 @@ function bindViewEvents() {
     state.marketingStatus = 'scheduled';
     render('workspace');
     setTimeout(() => focusWorkspaceArtifact('campaign-kit'), 120);
-    showToast('Instagram campaign approved and scheduled in the demo workflow.');
+    showToast('Instagram campaign approved and scheduled in the marketing workflow.');
   });
   const regenerateMarketing = document.getElementById('regenerate-marketing');
   if (regenerateMarketing) regenerateMarketing.addEventListener('click', () => {
