@@ -15,6 +15,8 @@ const state = {
   pricingLocation: 'all',
   pricingCategory: 'All',
   marketLocation: 'backbay',
+  nextLocation: 'all',
+  nextType: 'all',
   approvals: new Set(),
   agentRunning: false,
   agentComplete: false,
@@ -31,6 +33,14 @@ function sourceUrl(key) { return STORELINE_DATA.sources[key] || '#'; }
 function stars(rating) { return '★'.repeat(rating) + '☆'.repeat(5 - rating); }
 function escapeHtml(value) { return String(value).replace(/[&<>"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[character])); }
 function safeUrl(value) { try { const url = new URL(value); return ['http:', 'https:'].includes(url.protocol) ? url.href : '#'; } catch { return '#'; } }
+
+function synthesisPanel({ label, title, summary, signals, action, sources }) {
+  return `<div class="synthesis-head"><span class="synthesis-mark">✦</span><div><span class="eyebrow">${escapeHtml(label)}</span><h2>${escapeHtml(title)}</h2></div><span class="synthesis-grounding">Reviews + Sales + Market</span></div>
+    <p class="synthesis-summary">${escapeHtml(summary)}</p>
+    <div class="synthesis-grid">${signals.map((signal) => `<article class="tone-${signal.tone || 'teal'}"><span>${escapeHtml(signal.label)}</span><strong>${escapeHtml(signal.title)}</strong><p>${escapeHtml(signal.text)}</p></article>`).join('')}</div>
+    <div class="synthesis-action"><span>Recommended move</span><strong>${escapeHtml(action)}</strong></div>
+    <footer>${sources.map((source) => `<a href="${safeUrl(source.url)}" target="_blank" rel="noreferrer">${escapeHtml(source.label)} ↗</a>`).join('')}</footer>`;
+}
 
 function render(view = state.view) {
   state.view = view;
@@ -66,8 +76,27 @@ function renderReviews() {
     <div><span class="eyebrow">${selected.platform}</span><strong>${selected.rating}</strong><span class="summary-stars">★★★★★</span></div>
     <div><span>Review count</span><strong>${selected.count}</strong></div>
     <div><span>Dominant signal</span><strong>${selected.tone}</strong></div>
-    <a href="${sourceUrl(selected.source || 'yelpBoston')}" target="_blank" rel="noreferrer">View source ↗</a>`;
+    <div class="summary-actions"><a href="${sourceUrl(selected.source || 'yelpBoston')}" target="_blank" rel="noreferrer">View source ↗</a>${selected.id === 'backbay' ? '<button data-open-location="backbay">View strengths & gaps →</button>' : ''}</div>`;
   document.getElementById('review-feed-title').textContent = selected.name;
+  const reviewSummary = state.reviewLocation === 'all'
+    ? 'Product and pastry quality are the strongest brand assets. The preventable losses are beverage inconsistency, peak seating friction and morning availability — all concentrated in categories with strong modeled sales economics.'
+    : `${selected.name} is currently defined by ${selected.tone.toLowerCase()}. The local comments matter most when read beside the chain-wide beverage economics and Boston value pressure.`;
+  document.getElementById('review-synthesis').innerHTML = synthesisPanel({
+    label: 'AI review synthesis',
+    title: state.reviewLocation === 'all' ? 'Love the product. Remove the operating friction.' : `${selected.name}: turn comments into operating priorities.`,
+    summary: reviewSummary,
+    signals: [
+      { label: 'Review pattern', title: 'Quality creates the pull', text: 'Pastries, coffee and distinctive flavors drive the clearest positive language.', tone: 'coral' },
+      { label: 'Sales connection', title: 'Protect high-margin drinks', text: 'Cold Brew and specialty lattes combine strong modeled growth with 74–81% margins.', tone: 'teal' },
+      { label: 'Market connection', title: 'Reliability beats more discounting', text: 'With 42% of consumers cutting café spend, consistency and availability must justify the premium.', tone: 'blue' },
+    ],
+    action: 'Calibrate matcha and cold brew twice daily, increase morning latte prep, and test portable afternoon froyo away from the seating peak.',
+    sources: [
+      { label: 'Public reviews', url: sourceUrl(selected.source || 'yelpBoston') },
+      { label: 'Restaurant affordability', url: sourceUrl('restaurantDemand') },
+      { label: 'Sales model', url: sourceUrl('tatteMenu') },
+    ],
+  });
   document.getElementById('review-feed').innerHTML = reviews.length ? reviews.map((review) => `
     <article class="review-card"><header><span class="platform ${review.platform.toLowerCase()}">${review.platform[0]}</span><div><strong>${review.author}</strong><small>${review.platform} · ${review.date}</small></div><span class="stars">${stars(review.rating)}</span></header><p>“${review.text}”</p><footer>${review.tags.map((tag) => `<span>${tag}</span>`).join('')}</footer></article>`).join('') : `<div class="empty-state"><strong>Profile evidence only</strong><p>Open the source to inspect the location’s current public reviews.</p></div>`;
   document.getElementById('review-clusters').innerHTML = STORELINE_DATA.reviewClusters.map((cluster) => `
@@ -86,19 +115,52 @@ function renderPricing() {
   const units = filtered.reduce((sum, product) => sum + Math.round(product.units * multiplier), 0);
   const margin = Math.round(filtered.reduce((sum, product) => sum + product.margin, 0) / filtered.length);
   const leader = [...filtered].sort((a, b) => b.trend - a.trend)[0];
+  const revenueLeader = [...filtered].sort((a, b) => (b.price * b.units) - (a.price * a.units))[0];
   document.getElementById('pricing-kpis').innerHTML = `
     <article class="metric-card static"><span>Modeled weekly sales</span><strong>${money.format(revenue).replace('.00','')}</strong><small>${location.name}</small></article>
     <article class="metric-card static"><span>Modeled weekly units</span><strong>${units.toLocaleString()}</strong><small>${state.pricingCategory} products</small></article>
     <article class="metric-card static"><span>Average gross margin</span><strong>${margin}%</strong><small>Curated unit economics</small></article>
     <button class="metric-card" data-open-location="${location.id}"><span>Fastest-growing product</span><strong>${leader.name}</strong><small>+${leader.trend}% · open location detail →</small></button>`;
   document.getElementById('pricing-table-title').textContent = `${location.name} · ${location.note}`;
+  document.getElementById('sales-synthesis').innerHTML = synthesisPanel({
+    label: 'AI sales synthesis',
+    title: `${location.name}: sales strength is concentrated in repeatable beverage occasions.`,
+    summary: `${revenueLeader.name} leads the selected modeled mix by weekly revenue, while ${leader.name} has the strongest growth signal. The pattern supports protecting core availability before adding a tightly measured afternoon offer.`,
+    signals: [
+      { label: 'Sales pattern', title: `${money.format(revenue).replace('.00','')} modeled weekly sales`, text: `${units.toLocaleString()} units at a ${margin}% average modeled gross margin for the current filters.`, tone: 'teal' },
+      { label: 'Review connection', title: 'Distinctive drinks win — consistency leaks value', text: 'Guests praise unique latte flavors but flag milky matcha, inconsistent cold brew and morning sellouts.', tone: 'coral' },
+      { label: 'Market connection', title: 'Grow without losing the value ladder', text: 'Boston dining inflation is 5.1% while 42% of consumers report spending less at cafés and takeout.', tone: 'blue' },
+    ],
+    action: `Protect ${revenueLeader.name} availability, retain an entry-price drink, and measure the $7.50 froyo pilot on attach rate and repeat purchase.`,
+    sources: [
+      { label: 'Official Tatte menu photography', url: 'https://tattebakery.com/menu#full-menu' },
+      { label: 'Boston inflation', url: sourceUrl('blsBoston') },
+      { label: 'Public reviews', url: sourceUrl('yelpBoston') },
+    ],
+  });
   document.getElementById('product-table-body').innerHTML = filtered.map((product) => `
-    <button class="product-row" data-product="${product.name}"><span><b>${product.name}</b>${product.forecast ? '<em>pilot</em>' : ''}</span><span>${product.category}</span><span>${money.format(product.price)}</span><span>${Math.round(product.units * multiplier).toLocaleString()}</span><span>${product.margin}%</span><span class="positive">+${product.trend}%</span></button>`).join('');
+    <button class="product-row" data-product="${product.name}"><span class="product-identity">${product.image ? `<img src="${product.image}" alt="${escapeHtml(product.name)} from the Tatte menu" loading="lazy">` : '<i class="pilot-image">PILOT</i>'}<span><b>${product.name}</b>${product.forecast ? '<em>concept</em>' : ''}<small>${escapeHtml(product.imageNote)}</small></span></span><span>${product.category}</span><span>${money.format(product.price)}</span><span>${Math.round(product.units * multiplier).toLocaleString()}</span><span>${product.margin}%</span><span class="positive">+${product.trend}%</span></button>`).join('');
 }
 
 function renderMarket() {
   document.getElementById('macro-grid').innerHTML = STORELINE_DATA.macroSignals.map((signal) => `
     <a class="macro-card ${signal.tone}" href="${sourceUrl(signal.url)}" target="_blank" rel="noreferrer"><span>${signal.source} ↗</span><strong>${signal.value}</strong><h3>${signal.label}</h3><p>${signal.detail}</p></a>`).join('');
+  document.getElementById('market-synthesis').innerHTML = synthesisPanel({
+    label: 'AI market synthesis',
+    title: 'Selective growth is possible, but the offer has to earn its premium.',
+    summary: 'Frozen yogurt is regaining attention while restaurant costs and consumer affordability pressure remain elevated. Storeline connects that outside demand to the internal beverage mix and review language, making a narrow pilot stronger than a broad menu launch.',
+    signals: [
+      { label: 'Market pattern', title: 'Momentum plus pressure', text: '#froyo activity rose 16%, but Boston dining prices are up 5.1% and restaurant expenses are up 36% since 2019.', tone: 'blue' },
+      { label: 'Sales connection', title: 'Attach to cold-drink demand', text: 'Cold Brew carries the strongest existing modeled beverage growth at 24% with an 81% margin.', tone: 'teal' },
+      { label: 'Review connection', title: 'Portable and lighter fits the gap', text: 'Guest language points to lighter choices and lunchtime seating friction — both favor a take-away afternoon test.', tone: 'coral' },
+    ],
+    action: 'Run a 14-day Pier 4 and Back Bay pilot, keep the price at $7.50, and stop or expand based on attach rate, repeat purchase and margin.',
+    sources: [
+      { label: 'Axios froyo trend', url: sourceUrl('froyoTrend') },
+      { label: 'BLS Boston prices', url: sourceUrl('blsBoston') },
+      { label: 'WBEZ Greek froyo demand', url: sourceUrl('froyoRestaurants') },
+    ],
+  });
   document.getElementById('trend-grid').innerHTML = STORELINE_DATA.trendSignals.map((signal, index) => `
     <a class="trend-card" href="${sourceUrl(signal.url)}" target="_blank" rel="noreferrer"><span class="trend-index">0${index + 1}</span><div><h3>${signal.title}</h3><p><strong>${signal.stat}</strong> ${signal.label}</p><small>${signal.source} ↗</small></div></a>`).join('');
   const locationNames = { backbay: 'Back Bay', seaport: 'Pier 4 / Seaport', cambridge: 'Cambridge', southend: 'South End' };
@@ -108,11 +170,16 @@ function renderMarket() {
 }
 
 function renderRecommendations() {
-  document.getElementById('recommendation-list').innerHTML = STORELINE_DATA.recommendations.map((item) => {
+  const locationFilter = document.getElementById('decision-location-filter');
+  const typeFilter = document.getElementById('decision-type-filter');
+  if (locationFilter) locationFilter.value = state.nextLocation;
+  if (typeFilter) typeFilter.value = state.nextType;
+  const filtered = STORELINE_DATA.recommendations.filter((item) => (state.nextLocation === 'all' || item.locationKeys.includes(state.nextLocation)) && (state.nextType === 'all' || item.type === state.nextType));
+  document.getElementById('recommendation-list').innerHTML = filtered.length ? filtered.map((item) => {
     const approved = state.approvals.has(item.id);
     const action = item.id === 'froyo' ? '<button class="primary-button" data-run-playbook>Run playbook</button>' : `<button class="primary-button" data-approve="${item.id}">Approve action</button>`;
-    return `<article class="decision-card ${item.id === 'froyo' ? 'featured' : ''} ${approved ? 'approved-card' : ''}"><div class="decision-number">${approved ? '✓' : item.priority}</div><div class="decision-main"><div class="decision-meta"><span class="signal-chip ${approved ? 'approved' : item.id === 'froyo' ? 'opportunity' : item.id === 'beverage' ? 'watch' : 'alert'}">${approved ? 'Approved' : item.type}</span><span>${item.confidence}% confidence</span><span>${item.locations}</span></div><h2>${item.title}</h2><p>${item.why}</p><div class="decision-proof">${item.proof.map((proof, index) => `<span><i class="${['teal','coral','blue'][index] || 'teal'}"></i>${proof}</span>`).join('')}</div></div><div class="decision-actions">${approved ? '<span class="approved-label">Added to the operating plan ✓</span>' : `<button class="secondary-button" data-open-recommendation="${item.id}">Review evidence</button>${action}`}</div></article>`;
-  }).join('');
+    return `<article class="decision-card ${item.id === 'froyo' ? 'featured' : ''} ${approved ? 'approved-card' : ''}"><div class="decision-number">${approved ? '✓' : item.priority}</div><div class="decision-main"><div class="decision-meta"><span class="signal-chip ${approved ? 'approved' : item.id === 'froyo' ? 'opportunity' : item.id === 'beverage' ? 'watch' : 'alert'}">${approved ? 'Approved' : item.type}</span><span>${item.confidence}% confidence</span><span>${item.locations}</span></div><h2>${item.title}</h2><p>${item.why}</p><div class="decision-proof">${item.proof.map((proof, index) => `<span><i class="${['teal','coral','blue'][index] || 'teal'}"></i>${proof}</span>`).join('')}</div></div><div class="decision-side"><div class="impact-estimate"><span>Estimated impact</span><strong>${item.impact}</strong><small>${item.impactLabel}</small></div><div class="decision-actions">${approved ? '<span class="approved-label">Added to the operating plan ✓</span>' : `<button class="secondary-button" data-open-recommendation="${item.id}">View action</button>${action}`}</div></div></article>`;
+  }).join('') : '<div class="empty-state"><strong>No actions match these filters</strong><p>Clear a filter to restore the full priority list.</p></div>';
   syncDecisionCounts();
 }
 
@@ -227,10 +294,13 @@ function recommendationDrawer(id) {
   const context = id === 'froyo' ? `
     <section class="evidence-section"><div class="evidence-heading"><span class="source-mark teal">01</span><div><h3>Modeled product economics</h3><p>Curated pricing scenario</p></div></div><div class="evidence-metrics"><div><strong>$7.50</strong><span>Target price</span></div><div><strong>68%</strong><span>Gross margin</span></div><div><strong>224</strong><span>Weekly units</span></div></div><p class="evidence-note">Use the price as the test anchor. Measure attach rate and repeat purchases before adding it to the permanent menu.</p></section>
     <section class="evidence-section"><div class="evidence-heading"><span class="source-mark coral">02</span><div><h3>Customer language</h3><p>Supplied Yelp review corpus</p></div></div><div class="review-quote"><span class="platform yelp">Y</span><p>“Fresh and quality ingredients everywhere.”</p><b>5★</b></div><div class="review-quote"><span class="platform yelp">Y</span><p>“The black sesame latte was unique.”</p><b>5★</b></div><p class="evidence-note">Reviews support premium ingredients and distinctive drinks; they do not by themselves prove frozen-yogurt demand.</p></section>
-    <section class="evidence-section"><div class="evidence-heading"><span class="source-mark blue">03</span><div><h3>Market context</h3><p>Current public reporting</p></div></div><div class="market-list"><a href="${sourceUrl('froyoTrend')}" target="_blank" rel="noreferrer"><span>#froyo social activity</span><strong>+16% ↗</strong></a><a href="${sourceUrl('froyoRestaurants')}" target="_blank" rel="noreferrer"><span>Greek froyo launch reel</span><strong>20.5k views ↗</strong></a><a href="${sourceUrl('tatteMenu')}" target="_blank" rel="noreferrer"><span>Existing Greek-yogurt menu anchors</span><strong>2 items ↗</strong></a></div></section>` : `
+    <section class="evidence-section"><div class="evidence-heading"><span class="source-mark blue">03</span><div><h3>Real operator case study</h3><p>WBEZ reporting · Chicago restaurants</p></div></div><div class="case-study"><strong>Rotisserie Ema sold 800+ Greek froyos in four hours.</strong><p>Its $1 Friday walk-up promotion reached a record after week-over-week summer growth. Kouklas sold 568 cups in July and reported dessert-specific destination visits after a 20.5k-view reel.</p><a href="${sourceUrl('froyoRestaurants')}" target="_blank" rel="noreferrer">Read the WBEZ case study ↗</a></div></section>
+    <section class="evidence-section"><div class="evidence-heading"><span class="source-mark blue">04</span><div><h3>Market context</h3><p>Current public reporting</p></div></div><div class="market-list"><a href="${sourceUrl('froyoTrend')}" target="_blank" rel="noreferrer"><span>#froyo social activity</span><strong>+16% ↗</strong></a><a href="${sourceUrl('froyoRestaurants')}" target="_blank" rel="noreferrer"><span>Greek froyo launch reel</span><strong>20.5k views ↗</strong></a><a href="${sourceUrl('tatteMenu')}" target="_blank" rel="noreferrer"><span>Existing Greek-yogurt menu anchors</span><strong>2 items ↗</strong></a></div></section>` : id === 'availability' ? `
+    <section class="evidence-section"><div class="evidence-heading"><span class="source-mark coral">01</span><div><h3>Back Bay action plan</h3><p>One detailed operating example</p></div></div><div class="action-steps"><div><b>1</b><p><strong>7:45 AM · Open register two</strong><span>Assign one cross-trained cashier before the commute peak and confirm drawer readiness.</span></p></div><div><b>2</b><p><strong>8:00–10:00 AM · Split the queue</strong><span>Register one handles food; register two handles beverages and pickup exceptions.</span></p></div><div><b>3</b><p><strong>Prep against observed demand</strong><span>Stage House Latte inputs at 1.25× the current par and log stockouts every 30 minutes.</span></p></div><div><b>4</b><p><strong>10:15 AM · Record the result</strong><span>Capture wait time, transactions, labor minutes, sellouts and abandoned orders.</span></p></div></div></section>
+    <section class="evidence-section"><div class="evidence-heading"><span class="source-mark teal">02</span><div><h3>Estimated business impact</h3><p>Modeled, not observed</p></div></div><div class="evidence-metrics"><div><strong>+$1.9k</strong><span>Weekly captured demand</span></div><div><strong>−2.4m</strong><span>Target wait reduction</span></div><div><strong>&lt;12%</strong><span>Labor-to-sales guardrail</span></div></div></section>` : `
     <section class="evidence-section"><div class="evidence-heading"><span class="source-mark coral">01</span><div><h3>Why this surfaced</h3><p>Connected operating evidence</p></div></div><p class="drawer-copy">${item.why}</p></section>
     <section class="evidence-section"><div class="evidence-heading"><span class="source-mark teal">02</span><div><h3>Signals to measure</h3><p>Decision proof</p></div></div><div class="proof-grid">${item.proof.map((proof) => `<span>${proof}</span>`).join('')}</div></section>`;
-  drawerBody.innerHTML = `<div class="recommendation-brief"><span class="signal-chip opportunity">${item.type}</span><p>${item.title}</p><div class="confidence-row"><span>Confidence</span><strong>${item.confidence}%</strong><div><i style="width:${item.confidence}%"></i></div></div></div>${context}<section class="measurement-plan"><span class="eyebrow">Measurement plan</span><div class="plan-grid"><div><b>1</b><span>Baseline</span><strong>7 days</strong></div><div><b>2</b><span>Test</span><strong>14 days</strong></div><div><b>3</b><span>Decide</span><strong>Keep / change</strong></div></div></section>`;
+  drawerBody.innerHTML = `<div class="recommendation-brief"><span class="signal-chip opportunity">${item.type}</span><p>${item.title}</p><div class="confidence-row"><span>Confidence</span><strong>${item.confidence}%</strong><div><i style="width:${item.confidence}%"></i></div></div><div class="drawer-impact"><span>Estimated impact</span><strong>${item.impact}</strong><small>${item.impactLabel}</small></div></div>${context}<section class="measurement-plan"><span class="eyebrow">Reviewed 14-day measurement plan</span><div class="plan-grid"><div><b>1</b><span>Baseline</span><strong>7 days</strong></div><div><b>2</b><span>Test</span><strong>14 days</strong></div><div><b>3</b><span>Decide</span><strong>Keep / change</strong></div></div><p class="measurement-note">Primary: transactions or attach rate. Guardrails: gross margin, labor-to-sales, stockouts and rating movement. Compare against the same weekdays and dayparts.</p></section>`;
   drawerFooter.innerHTML = `<button class="secondary-button close-drawer">Close</button>${id === 'froyo' ? '<button class="primary-button" data-run-playbook>Run playbook</button>' : state.approvals.has(id) ? '<span class="approved-label">Approved ✓</span>' : `<button class="primary-button" data-drawer-approve="${id}">Approve action</button>`}`;
   openDrawer();
 }
@@ -242,7 +312,8 @@ function locationDrawer(id) {
   const leaders = [...STORELINE_DATA.products].sort((a, b) => (b.units * b.price) - (a.units * a.price)).slice(0, 5);
   drawerKicker.textContent = 'Location profile';
   drawerTitle.textContent = location.name;
-  drawerBody.innerHTML = `<div class="recommendation-brief"><span class="signal-chip opportunity">Product mix</span><p>${location.note}. Select this location in Sales to see adjusted units and revenue.</p></div><section class="evidence-section"><div class="evidence-heading"><span class="source-mark coral">01</span><div><h3>Public review profile</h3><p>${reviewLocation ? reviewLocation.platform : 'Public sources'}</p></div></div><div class="evidence-metrics"><div><strong>${reviewLocation?.rating || '—'}</strong><span>Rating</span></div><div><strong>${reviewLocation?.count || '—'}</strong><span>Reviews</span></div><div><strong>${reviewLocation?.tone || 'Cross-location'}</strong><span>Main signal</span></div></div>${reviews.map((review) => `<div class="review-quote"><span class="platform ${review.platform.toLowerCase()}">${review.platform[0]}</span><p>“${review.text}”</p><b>${review.rating}★</b></div>`).join('')}</section><section class="evidence-section"><div class="evidence-heading"><span class="source-mark teal">02</span><div><h3>Top modeled products</h3><p>Revenue-ranked</p></div></div><div class="market-list">${leaders.map((product) => `<div><span>${product.name}</span><strong>${money.format(product.price * product.units * location.multiplier).replace('.00','')}</strong></div>`).join('')}</div></section>`;
+  const backBayDetail = id === 'backbay' ? `<section class="evidence-section"><div class="evidence-heading"><span class="source-mark blue">02</span><div><h3>What Back Bay is doing well vs. where it leaks value</h3><p>Reviews + sales + market synthesis</p></div></div><div class="strength-gap-grid"><div><span>Doing well</span><strong>Distinctive product pull</strong><p>Almond croissants and pistachio lattes earn specific praise; premium product quality supports price.</p></div><div><span>Needs work</span><strong>Morning availability + queue</strong><p>A House Latte sold out by 10 AM, while peak pressure risks turning intent into abandoned demand.</p></div></div></section>` : '';
+  drawerBody.innerHTML = `<div class="recommendation-brief"><span class="signal-chip opportunity">Product mix</span><p>${location.note}. Select this location in Sales to see adjusted units and revenue.</p></div><section class="evidence-section"><div class="evidence-heading"><span class="source-mark coral">01</span><div><h3>Public review profile</h3><p>${reviewLocation ? reviewLocation.platform : 'Public sources'}</p></div></div><div class="evidence-metrics"><div><strong>${reviewLocation?.rating || '—'}</strong><span>Rating</span></div><div><strong>${reviewLocation?.count || '—'}</strong><span>Reviews</span></div><div><strong>${reviewLocation?.tone || 'Cross-location'}</strong><span>Main signal</span></div></div>${reviews.map((review) => `<div class="review-quote"><span class="platform ${review.platform.toLowerCase()}">${review.platform[0]}</span><p>“${review.text}”</p><b>${review.rating}★</b></div>`).join('')}</section>${backBayDetail}<section class="evidence-section"><div class="evidence-heading"><span class="source-mark teal">03</span><div><h3>Top modeled products</h3><p>Revenue-ranked</p></div></div><div class="market-list">${leaders.map((product) => `<div><span>${product.name}</span><strong>${money.format(product.price * product.units * location.multiplier).replace('.00','')}</strong></div>`).join('')}</div></section>`;
   drawerFooter.innerHTML = '<button class="secondary-button close-drawer">Close</button>';
   openDrawer();
 }
@@ -265,6 +336,12 @@ function bindViewEvents() {
   if (clearChat) clearChat.addEventListener('click', () => { state.chat = state.chat.slice(0, 1); renderChat(); });
   const runButton = document.getElementById('run-playbook');
   if (runButton) runButton.addEventListener('click', runPlaybook);
+  const decisionLocation = document.getElementById('decision-location-filter');
+  if (decisionLocation) decisionLocation.onchange = () => { state.nextLocation = decisionLocation.value; renderRecommendations(); bindViewEvents(); };
+  const decisionType = document.getElementById('decision-type-filter');
+  if (decisionType) decisionType.onchange = () => { state.nextType = decisionType.value; renderRecommendations(); bindViewEvents(); };
+  const clearFilters = document.getElementById('clear-decision-filters');
+  if (clearFilters) clearFilters.onclick = () => { state.nextLocation = 'all'; state.nextType = 'all'; renderRecommendations(); bindViewEvents(); };
 }
 
 function approve(id) {
@@ -313,8 +390,21 @@ document.querySelectorAll('.nav-item').forEach((button) => button.addEventListen
 document.querySelectorAll('.close-drawer').forEach((button) => button.addEventListener('click', closeDrawer));
 backdrop.addEventListener('click', closeDrawer);
 document.getElementById('help-button').addEventListener('click', () => showToast('Storeline retrieves reviews, modeled sales and market evidence with source-level citations.'));
-document.getElementById('account-button').addEventListener('click', () => showToast('Tatte Bakery & Café · Boston intelligence layer'));
-document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeDrawer(); });
+const accountButton = document.getElementById('account-button');
+const accountMenu = document.getElementById('account-menu');
+accountButton.addEventListener('click', (event) => {
+  event.stopPropagation();
+  const opening = accountMenu.hidden;
+  accountMenu.hidden = !opening;
+  accountButton.setAttribute('aria-expanded', String(opening));
+});
+accountMenu.querySelectorAll('[data-account-action]').forEach((button) => button.addEventListener('click', () => {
+  showToast(`${button.dataset.accountAction} is available in the full workspace.`);
+  accountMenu.hidden = true;
+  accountButton.setAttribute('aria-expanded', 'false');
+}));
+document.addEventListener('click', (event) => { if (!accountMenu.hidden && !accountMenu.contains(event.target)) { accountMenu.hidden = true; accountButton.setAttribute('aria-expanded', 'false'); } });
+document.addEventListener('keydown', (event) => { if (event.key === 'Escape') { closeDrawer(); accountMenu.hidden = true; accountButton.setAttribute('aria-expanded', 'false'); } });
 
 render('today');
 loadRuntimeStatus();

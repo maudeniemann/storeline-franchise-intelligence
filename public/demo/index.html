@@ -26,7 +26,16 @@
           <button class="nav-item" data-view="next"><span class="nav-icon">→</span><span>Next steps</span><span class="nav-count" id="decision-count">4</span></button>
           <button class="nav-item" data-view="assistant"><span class="nav-icon">✦</span><span>Ask Storeline</span></button>
         </nav>
-        <div class="sidebar-bottom"><button class="account-card" id="account-button"><span class="avatar">TB</span><span><strong>Tatte Bakery & Café</strong><small>Boston intelligence layer</small></span><span class="chevron">⌄</span></button></div>
+        <div class="sidebar-bottom">
+          <div class="account-menu" id="account-menu" hidden>
+            <div><span class="eyebrow">Workspace</span><strong>Tatte Bakery & Café</strong><small>Boston region · Franchise owner</small></div>
+            <button data-account-action="User settings"><span>⚙</span><span><b>User settings</b><small>Profile, alerts and approvals</small></span></button>
+            <button data-account-action="Switch user"><span>⇄</span><span><b>Switch user</b><small>Owner, operator or analyst</small></span></button>
+            <button data-account-action="Switch geography"><span>⌖</span><span><b>Switch geography</b><small>Boston region</small></span></button>
+            <button data-account-action="Data connections"><span>↗</span><span><b>Data connections</b><small>Reviews, sales and market</small></span></button>
+          </div>
+          <button class="account-card" id="account-button" aria-haspopup="menu" aria-expanded="false"><span class="avatar">TB</span><span><strong>Tatte Bakery & Café</strong><small>Boston intelligence layer</small></span><span class="chevron">⌃</span></button>
+        </div>
       </aside>
 
       <main class="main-content">
@@ -65,6 +74,28 @@
           <button class="metric-card" data-view-jump="pricing"><span>Product opportunity</span><strong>68%</strong><small>Modeled pilot margin</small><svg viewBox="0 0 120 35"><path d="M2 29 C19 30 27 24 42 25 S66 17 78 19 S101 9 118 5"/></svg></button>
         </div>
 
+        <div class="location-intelligence-grid">
+          <section class="panel location-outlook">
+            <div class="panel-heading"><div><span class="eyebrow">Location outlook</span><h3>Current performance and post-pilot target</h3></div><div class="outlook-legend"><span><i></i>Current</span><span><i></i>Post-pilot target</span></div></div>
+            <div class="location-score-list">
+              <button data-open-location="backbay"><b>Back Bay</b><span class="score-track"><i class="current coral" style="left:32%"></i><i class="target" style="left:53%"></i></span><strong>63</strong><small>Target 74</small></button>
+              <button data-open-location="seaport"><b>Pier 4 / Seaport</b><span class="score-track"><i class="current teal" style="left:70%"></i><i class="target" style="left:82%"></i></span><strong>84</strong><small>Target 90</small></button>
+              <button data-open-location="cambridge"><b>Cambridge</b><span class="score-track"><i class="current yellow" style="left:41%"></i><i class="target" style="left:56%"></i></span><strong>68</strong><small>Target 76</small></button>
+              <button data-open-location="southend"><b>South End</b><span class="score-track"><i class="current green" style="left:84%"></i><i class="target" style="left:91%"></i></span><strong>91</strong><small>Target 95</small></button>
+            </div>
+          </section>
+          <section class="panel signal-connection">
+            <div class="panel-heading"><div><span class="eyebrow">Connected evidence</span><h3>How the signals move together</h3></div></div>
+            <div class="connection-chain">
+              <div><span class="source-mark blue">M</span><p><b>Market</b><small>Greek froyo earns destination trips and nearby competitors expand premium dessert occasions.</small></p></div>
+              <i>→</i>
+              <div><span class="source-mark coral">R</span><p><b>Reviews</b><small>Guests already reward distinctive flavors but penalize sellouts and inconsistency.</small></p></div>
+              <i>→</i>
+              <div><span class="source-mark teal">S</span><p><b>Sales</b><small>Protect core drinks, then test a $7.50 afternoon add-on at a modeled 68% margin.</small></p></div>
+            </div>
+          </section>
+        </div>
+
         <div class="content-grid">
           <section class="panel"><div class="panel-heading"><div><span class="eyebrow">Customer signal</span><h3>What guests are saying</h3></div><button class="text-button" data-view-jump="reviews">Open reviews →</button></div><div class="today-signal-list" id="today-review-list"></div></section>
           <section class="panel"><div class="panel-heading"><div><span class="eyebrow">Outside context</span><h3>What changed</h3></div><button class="text-button" data-view-jump="market">Open market →</button></div><div class="today-market-list" id="today-market-list"></div></section>
@@ -77,15 +108,17 @@
         <div class="page-heading compact"><div><span class="eyebrow">Customer language</span><h1>Reviews, organized into operating signals.</h1><p>Choose a location to see source-backed comments and recurring themes.</p></div><a class="source-link" href="https://www.yelp.com/search?find_desc=tatte+bakery+%26+cafe&find_loc=Boston%2C+MA" target="_blank" rel="noreferrer">Open Yelp results ↗</a></div>
         <div class="filter-scroller" id="review-location-tabs"></div>
         <section class="location-summary" id="review-summary"></section>
+        <section class="ai-synthesis" id="review-synthesis"></section>
         <div class="review-layout"><section class="panel"><div class="panel-heading"><div><span class="eyebrow">Comments</span><h3 id="review-feed-title">All locations</h3></div><span class="period-label">Recent public reviews</span></div><div class="review-feed" id="review-feed"></div></section><aside class="panel cluster-panel"><div class="panel-heading"><div><span class="eyebrow">Themes</span><h3>What repeats</h3></div></div><div class="cluster-list" id="review-clusters"></div></aside></div>
       </section>
     </template>
 
     <template id="pricing-template">
       <section class="page">
-        <div class="page-heading compact"><div><span class="eyebrow">Modeled sales data</span><h1>Sales performance and product mix, by location.</h1><p>A Toast-style operating view of modeled revenue, units, prices, margins and growth signals.</p></div><span class="scenario-badge">Modeled sales</span></div>
+        <div class="page-heading compact"><div><span class="eyebrow">Modeled sales data</span><h1>Sales performance and product mix, by location.</h1><p>A Toast-style operating view of modeled revenue, units, prices, margins and growth signals.</p></div><div class="heading-actions"><span class="scenario-badge">Modeled sales</span><a class="source-link" href="https://tattebakery.com/menu#full-menu" target="_blank" rel="noreferrer">Official menu + photos ↗</a></div></div>
         <div class="filter-row"><div class="filter-scroller" id="pricing-location-tabs"></div><div class="filter-scroller compact-filters" id="pricing-category-tabs"></div></div>
         <div class="metric-grid" id="pricing-kpis"></div>
+        <section class="ai-synthesis" id="sales-synthesis"></section>
         <section class="panel pricing-panel"><div class="panel-heading"><div><span class="eyebrow">Product sales</span><h3 id="pricing-table-title">All-location mix</h3></div><span class="period-label">Modeled weekly performance</span></div><div class="product-table"><div class="product-row product-head"><span>Product</span><span>Category</span><span>Price</span><span>Units</span><span>Margin</span><span>Trend</span></div><div id="product-table-body"></div></div></section>
       </section>
     </template>
@@ -94,6 +127,8 @@
       <section class="page">
         <div class="page-heading compact"><div><span class="eyebrow">External market context</span><h1>Demand, costs and nearby competition.</h1><p>Current public evidence, connected to the decisions a location operator can make.</p></div></div>
         <div class="macro-grid" id="macro-grid"></div>
+        <section class="ai-synthesis" id="market-synthesis"></section>
+        <section class="competitor-scope"><span class="eyebrow">Competitor search scope</span><div><span>Starbucks</span><span>Flour Bakery</span><span>Thinking Cup</span><span>Caffè Nero</span><span>Blue Bottle</span><span>La Colombe</span><span>GRECO</span><span>Local independents</span></div></section>
         <section class="section-block"><div class="section-title"><div><span class="eyebrow">Category movement</span><h2>Signals worth acting on</h2></div></div><div class="trend-grid" id="trend-grid"></div></section>
         <section class="section-block"><div class="section-title"><div><span class="eyebrow">Nearby businesses</span><h2>Competitive clusters</h2></div><span>Each business opens in Google Maps</span></div><div class="filter-scroller" id="market-location-tabs"></div><div class="competitor-grid" id="competitor-grid"></div></section>
       </section>
@@ -102,6 +137,11 @@
     <template id="next-template">
       <section class="page">
         <div class="page-heading compact"><div><span class="eyebrow">This is what you should do next</span><h1>Prioritized actions, with the proof attached.</h1><p>Review the evidence, assign an owner and keep the decision trail in one place.</p></div><div class="decision-summary"><span><b id="open-decision-count">4</b>Open</span><span><b id="approved-decision-count">0</b>Approved</span></div></div>
+        <div class="decision-filters">
+          <label><span>Location</span><select id="decision-location-filter"><option value="all">All locations</option><option value="backbay">Back Bay</option><option value="seaport">Pier 4 / Seaport</option><option value="beacon">Beacon Hill</option><option value="cambridge">Cambridge</option></select></label>
+          <label><span>Decision type</span><select id="decision-type-filter"><option value="all">All types</option><option value="Growth">Growth</option><option value="Operations">Operations</option><option value="Quality">Quality</option><option value="Revenue">Revenue</option></select></label>
+          <button class="text-button" id="clear-decision-filters">Clear filters</button>
+        </div>
         <div class="decision-list" id="recommendation-list"></div>
       </section>
     </template>

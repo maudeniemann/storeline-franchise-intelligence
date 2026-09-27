@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
 async function render() {
@@ -42,6 +42,26 @@ test("ships the six working product surfaces and grounded data layer", async () 
   assert.match(index, /Ask anything\. Then turn the answer into work\./);
   assert.match(index, /<span>Sales<\/span>/);
   assert.match(index, /Sales performance and product mix, by location\./);
+  assert.match(index, /id="sales-synthesis"/);
+  assert.match(index, /id="review-synthesis"/);
+  assert.match(index, /id="market-synthesis"/);
+  assert.match(index, /Official menu \+ photos/);
+  assert.match(index, /Current performance and post-pilot target/);
+  assert.match(index, /How the signals move together/);
+  assert.match(index, /User settings/);
+  assert.match(index, /Switch geography/);
+  assert.match(index, /Competitor search scope/);
+  assert.match(index, /decision-location-filter/);
+  assert.match(index, /decision-type-filter/);
+  assert.match(app, /AI sales synthesis/);
+  assert.match(app, /AI review synthesis/);
+  assert.match(app, /AI market synthesis/);
+  assert.match(app, /Rotisserie Ema sold 800\+ Greek froyos in four hours/);
+  assert.match(app, /Back Bay action plan/);
+  assert.match(app, /View strengths & gaps/);
+  assert.match(data, /estimated weekly captured demand/);
+  assert.match(data, /\/menu\/cold-brew\.jpg/);
+  assert.match(data, /Pilot concept — not on the current menu/);
   assert.match(app, /function runPlaybook\(/);
   assert.match(app, /function askStoreline\(/);
   assert.match(app, /fetch\(['"]\/api\/ask['"]/);
@@ -59,4 +79,23 @@ test("ships the six working product surfaces and grounded data layer", async () 
   assert.equal(JSON.parse(hosting).d1, "DB");
   assert.doesNotMatch(`${index}\n${app}\n${data}`, /synthetic demo|demo data/i);
   assert.doesNotMatch(`${page}\n${index}\n${app}\n${data}\n${api}`, /kernel/i);
+});
+
+test("bundles the official menu photography used by the sales catalog", async () => {
+  const assets = [
+    "almond-croissant.jpg",
+    "breakfast-sandwich.jpg",
+    "cold-brew.jpg",
+    "croissant-breakfast-sandwich.jpg",
+    "farro-bowl.jpg",
+    "lamb-meatball-shakshuka.png",
+    "latte.jpg",
+    "morning-bun.jpg",
+    "muesli.jpg",
+    "pistachio-latte.jpg",
+    "pistachio-tart.jpg",
+    "smoked-salmon-avocado-egg.jpg",
+    "traditional-shakshuka.jpg",
+  ];
+  await Promise.all(assets.map((asset) => access(new URL(`../public/menu/${asset}`, import.meta.url))));
 });
