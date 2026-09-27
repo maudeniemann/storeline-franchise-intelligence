@@ -4,7 +4,7 @@ export default function Home() {
       <iframe
         className="demo-frame"
         src="/demo/index.html"
-        title="Kernel franchise intelligence demo"
+        title="Kernel franchise intelligence"
       />
     </main>
   );

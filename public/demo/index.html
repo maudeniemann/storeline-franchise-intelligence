@@ -3,232 +3,136 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Kernel operational intelligence demo for multi-location hospitality groups." />
+    <meta name="description" content="Kernel operational intelligence for multi-location hospitality groups." />
     <title>Kernel — Franchise Intelligence</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <div class="ambient-network" aria-hidden="true">
       <svg viewBox="0 0 900 600" preserveAspectRatio="xMidYMid slice">
-        <g class="network-lines">
-          <path d="M46 144 155 62 278 124 392 46 507 140 625 67 780 144 858 55" />
-          <path d="M31 368 142 270 278 326 389 232 523 318 663 228 837 329" />
-          <path d="M155 62 142 270M278 124 278 326M392 46 389 232M507 140 523 318M625 67 663 228M780 144 837 329" />
-          <path d="M142 270 86 501 265 535 389 232 468 520 663 228 742 501 837 329" />
-        </g>
-        <g class="network-dots">
-          <circle cx="46" cy="144" r="3"/><circle cx="155" cy="62" r="4"/><circle cx="278" cy="124" r="3"/>
-          <circle cx="392" cy="46" r="3"/><circle cx="507" cy="140" r="5"/><circle cx="625" cy="67" r="3"/>
-          <circle cx="780" cy="144" r="4"/><circle cx="858" cy="55" r="3"/><circle cx="31" cy="368" r="4"/>
-          <circle cx="142" cy="270" r="5"/><circle cx="278" cy="326" r="3"/><circle cx="389" cy="232" r="4"/>
-          <circle cx="523" cy="318" r="4"/><circle cx="663" cy="228" r="5"/><circle cx="837" cy="329" r="3"/>
-          <circle cx="86" cy="501" r="3"/><circle cx="265" cy="535" r="4"/><circle cx="468" cy="520" r="3"/>
-          <circle cx="742" cy="501" r="5"/>
-        </g>
+        <g class="network-lines"><path d="M46 144 155 62 278 124 392 46 507 140 625 67 780 144 858 55"/><path d="M31 368 142 270 278 326 389 232 523 318 663 228 837 329"/><path d="M155 62 142 270M278 124 278 326M392 46 389 232M507 140 523 318M625 67 663 228M780 144 837 329"/><path d="M142 270 86 501 265 535 389 232 468 520 663 228 742 501 837 329"/></g>
+        <g class="network-dots"><circle cx="46" cy="144" r="3"/><circle cx="155" cy="62" r="4"/><circle cx="278" cy="124" r="3"/><circle cx="392" cy="46" r="3"/><circle cx="507" cy="140" r="5"/><circle cx="625" cy="67" r="3"/><circle cx="780" cy="144" r="4"/><circle cx="31" cy="368" r="4"/><circle cx="142" cy="270" r="5"/><circle cx="523" cy="318" r="4"/><circle cx="663" cy="228" r="5"/><circle cx="742" cy="501" r="5"/></g>
       </svg>
     </div>
 
     <div class="app-shell">
       <aside class="sidebar">
-        <div class="brand" aria-label="Kernel home">
-          <span class="brand-mark"><i></i><i></i><i></i><i></i></span>
-          <span>Kernel</span>
-        </div>
-
+        <div class="brand" aria-label="Kernel home"><span class="brand-mark"><i></i><i></i><i></i><i></i></span><span>Kernel</span></div>
         <nav class="main-nav" aria-label="Primary navigation">
-          <button class="nav-item active" data-view="today"><span class="nav-icon">⌂</span>Today</button>
-          <button class="nav-item" data-view="locations"><span class="nav-icon">⌖</span>Locations</button>
-          <button class="nav-item" data-view="signals"><span class="nav-icon">⌁</span>Signals</button>
-          <button class="nav-item" data-view="decisions"><span class="nav-icon">✓</span>Decisions <span class="nav-count" id="decision-count">3</span></button>
+          <button class="nav-item active" data-view="today"><span class="nav-icon">⌂</span><span>Today</span></button>
+          <button class="nav-item" data-view="reviews"><span class="nav-icon">★</span><span>Reviews</span></button>
+          <button class="nav-item" data-view="pricing"><span class="nav-icon">$</span><span>Pricing</span></button>
+          <button class="nav-item" data-view="market"><span class="nav-icon">◎</span><span>Market</span></button>
+          <button class="nav-item" data-view="next"><span class="nav-icon">→</span><span>Next steps</span><span class="nav-count" id="decision-count">4</span></button>
+          <button class="nav-item" data-view="assistant"><span class="nav-icon">✦</span><span>Ask Kernel</span></button>
         </nav>
-
-        <div class="sidebar-bottom">
-          <div class="data-status">
-            <span class="status-dot"></span>
-            <div>
-              <strong>Demo data</strong>
-              <span>Curated synthetic fixtures</span>
-            </div>
-          </div>
-          <button class="account-card" id="account-button" aria-label="Open account menu">
-            <span class="avatar">TB</span>
-            <span><strong>Tatte Bakery & Café</strong><small>Boston region · 4 locations</small></span>
-            <span class="chevron">⌄</span>
-          </button>
-        </div>
+        <div class="sidebar-bottom"><button class="account-card" id="account-button"><span class="avatar">TB</span><span><strong>Tatte Bakery & Café</strong><small>Boston intelligence layer</small></span><span class="chevron">⌄</span></button></div>
       </aside>
 
       <main class="main-content">
-        <header class="topbar">
-          <div class="breadcrumb"><span>Boston region</span><b>/</b><strong id="view-label">Today</strong></div>
-          <div class="topbar-actions">
-            <span class="demo-pill"><span></span> Synthetic demo</span>
-            <button class="icon-button" id="help-button" aria-label="About this demo">?</button>
-          </div>
-        </header>
-
+        <header class="topbar"><div class="breadcrumb"><span>Boston region</span><b>/</b><strong id="view-label">Today</strong></div><div class="topbar-actions"><span class="live-pill"><i></i>Sources refreshed</span><button class="icon-button" id="help-button" aria-label="About Kernel">?</button></div></header>
         <div id="view-root" aria-live="polite"></div>
       </main>
     </div>
 
     <div class="drawer-backdrop" id="drawer-backdrop" hidden></div>
     <aside class="evidence-drawer" id="evidence-drawer" aria-hidden="true" aria-labelledby="drawer-title">
-      <div class="drawer-header">
-        <div>
-          <span class="eyebrow">Opportunity evidence</span>
-          <h2 id="drawer-title">Pilot Greek frozen yogurt</h2>
-        </div>
-        <button class="icon-button close-drawer" aria-label="Close evidence panel">×</button>
-      </div>
-      <div class="drawer-body">
-        <div class="recommendation-brief">
-          <span class="signal-chip opportunity">High-confidence opportunity</span>
-          <p>Run a 14-day Greek frozen-yogurt pilot at Back Bay and Seaport. Price at $7.50 and merchandise beside iced drinks from 1–5 PM.</p>
-          <div class="confidence-row"><span>Confidence</span><strong>86%</strong><div><i style="width:86%"></i></div></div>
-        </div>
-
-        <section class="evidence-section">
-          <div class="evidence-heading"><span class="source-mark teal">01</span><div><h3>Private sales signal</h3><p>Toast-style demo transactions</p></div></div>
-          <div class="evidence-metrics">
-            <div><strong>+24%</strong><span>Iced drink units</span></div>
-            <div><strong>8.6%</strong><span>2–5 PM dessert attach</span></div>
-            <div><strong>$7.42</strong><span>Modeled target price</span></div>
-          </div>
-          <p class="evidence-note">Cold beverages are the fastest-growing afternoon category, but only 8.6% of those tickets include dessert. That leaves a measurable attachment gap.</p>
-        </section>
-
-        <section class="evidence-section">
-          <div class="evidence-heading"><span class="source-mark coral">02</span><div><h3>Customer language</h3><p>Google + Yelp-style demo reviews</p></div></div>
-          <div class="review-quote"><span class="platform google">G</span><p>“Would love something cold and lighter after lunch. Greek yogurt would fit the menu.”</p><b>5.0</b></div>
-          <div class="review-quote"><span class="platform yelp">Y</span><p>“The pastries are excellent, but in summer I end up going elsewhere for a light dessert.”</p><b>4.0</b></div>
-          <div class="review-quote"><span class="platform google">G</span><p>“A frozen yogurt or labneh bowl would be perfect with the iced coffee.”</p><b>4.0</b></div>
-          <div class="cluster-summary"><strong>37 related mentions</strong><span>“lighter dessert” · “Greek yogurt” · “something cold”</span></div>
-        </section>
-
-        <section class="evidence-section">
-          <div class="evidence-heading"><span class="source-mark blue">03</span><div><h3>Market context</h3><p>Competitor + demand demo signals</p></div></div>
-          <div class="market-list">
-            <div><span>Greek frozen yogurt on nearby menus</span><strong>9 of 14</strong></div>
-            <div><span>Local search interest, 30 days</span><strong class="positive">+31%</strong></div>
-            <div><span>Median competitor price</span><strong>$7.80</strong></div>
-            <div><span>Closest whitespace</span><strong>Seaport</strong></div>
-          </div>
-        </section>
-
-        <section class="measurement-plan">
-          <span class="eyebrow">14-day measurement plan</span>
-          <div class="plan-grid">
-            <div><b>1</b><span>Units/day</span><strong>Target 32+</strong></div>
-            <div><b>2</b><span>Attach rate</span><strong>Target 14%</strong></div>
-            <div><b>3</b><span>Gross margin</span><strong>Target 68%</strong></div>
-          </div>
-        </section>
-      </div>
-      <div class="drawer-footer">
-        <button class="secondary-button close-drawer">Not now</button>
-        <button class="primary-button" id="approve-pilot">Approve 14-day pilot</button>
-      </div>
+      <div class="drawer-header"><div><span class="eyebrow" id="drawer-kicker">Decision evidence</span><h2 id="drawer-title">Greek frozen-yogurt pilot</h2></div><button class="icon-button close-drawer" aria-label="Close panel">×</button></div>
+      <div class="drawer-body" id="drawer-body"></div>
+      <div class="drawer-footer" id="drawer-footer"></div>
     </aside>
 
-    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div class="toast" id="toast" role="status"></div>
 
     <template id="today-template">
-      <section class="page active-page">
-        <div class="page-heading">
-          <div><span class="eyebrow">Monday · September 27</span><h1>Three decisions need your attention.</h1><p>Kernel connected last week’s sales, customer language, and market changes across four Boston locations.</p></div>
-          <button class="secondary-button" data-view-jump="decisions">Open decision queue <span>→</span></button>
-        </div>
-
+      <section class="page">
+        <div class="page-heading"><div><span class="eyebrow">Monday · Boston region</span><h1>Four decisions need attention.</h1></div><span class="refresh-note">Updated from public sources · Sep 27</span></div>
         <article class="hero-decision">
           <div class="hero-copy">
-            <div class="hero-meta"><span class="signal-chip opportunity">New opportunity</span><span>Detected across 3 signal layers</span></div>
-            <h2>Customers are asking for a lighter dessert—and competitors are answering.</h2>
-            <p>Greek frozen yogurt is appearing more often in nearby menus and reviews. Your afternoon cold-drink sales suggest Back Bay and Seaport can support a focused pilot.</p>
-            <div class="source-proof">
-              <span><i class="dot teal"></i><b>Sales</b> Iced drinks +24%</span>
-              <span><i class="dot coral"></i><b>Reviews</b> 37 related mentions</span>
-              <span><i class="dot blue"></i><b>Market</b> Search interest +31%</span>
-            </div>
-            <div class="hero-actions">
-              <button class="primary-button open-evidence">Review evidence <span>→</span></button>
-              <span class="confidence-label">86% confidence</span>
-            </div>
+            <div class="hero-meta"><span class="signal-chip opportunity">Growth opportunity</span><span>86% confidence · Back Bay + Pier 4</span></div>
+            <h2>Test Greek frozen yogurt beside afternoon iced drinks.</h2>
+            <p>Current category momentum, nearby Greek-food competition and Tatte’s existing yogurt language support a tightly measured 14-day pilot.</p>
+            <div class="source-proof"><span><i class="dot coral"></i><b>Reviews</b> lighter options + seating</span><span><i class="dot teal"></i><b>Pricing</b> 68% modeled margin</span><span><i class="dot blue"></i><b>Market</b> #froyo posts +16%</span></div>
+            <div class="hero-actions"><button class="primary-button" data-open-recommendation="froyo">Review evidence</button><button class="secondary-button" data-view-jump="next">See all next steps</button></div>
           </div>
-          <div class="signal-constellation" aria-label="Three evidence clusters converge into one decision">
-            <svg viewBox="0 0 420 320" role="img">
-              <g class="constellation-lines"><path d="M80 74 C165 80 185 150 278 165"/><path d="M71 245 C161 232 192 180 278 165"/><path d="M314 57 C302 95 297 124 278 165"/><path d="M278 165 339 231"/></g>
-              <g class="cluster teal-cluster"><circle cx="61" cy="60" r="5"/><circle cx="78" cy="75" r="6"/><circle cx="94" cy="57" r="4"/><circle cx="55" cy="91" r="4"/><circle cx="100" cy="87" r="5"/><text x="42" y="124">SALES</text></g>
-              <g class="cluster coral-cluster"><circle cx="48" cy="230" r="5"/><circle cx="67" cy="244" r="6"/><circle cx="89" cy="231" r="4"/><circle cx="58" cy="265" r="4"/><circle cx="99" cy="260" r="5"/><text x="36" y="296">REVIEWS</text></g>
-              <g class="cluster blue-cluster"><circle cx="293" cy="46" r="4"/><circle cx="315" cy="58" r="6"/><circle cx="334" cy="42" r="4"/><circle cx="300" cy="82" r="5"/><circle cx="340" cy="75" r="4"/><text x="288" y="112">MARKET</text></g>
-              <g class="decision-node"><circle cx="278" cy="165" r="26"/><circle cx="278" cy="165" r="7"/><text x="223" y="207">OPPORTUNITY</text></g>
-              <g class="action-node"><rect x="304" y="216" width="102" height="52" rx="26"/><text x="329" y="247">PILOT</text></g>
-            </svg>
-          </div>
+          <div class="signal-orbit" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="signal-node reviews-node">REVIEWS</div><div class="signal-node price-node">PRICING</div><div class="signal-node market-node">MARKET</div><div class="kernel-node"><span class="brand-mark"><i></i><i></i><i></i><i></i></span><b>KERNEL</b></div></div>
         </article>
 
-        <section class="metric-grid" aria-label="Weekly performance metrics">
-          <article class="metric-card"><span>Net sales</span><strong>$214,840</strong><small class="positive">↑ 7.8% vs last week</small><svg viewBox="0 0 140 38"><path d="M2 31 18 28 36 29 54 18 72 22 90 12 108 15 138 5"/></svg></article>
-          <article class="metric-card"><span>Transactions</span><strong>8,421</strong><small class="positive">↑ 5.2% vs last week</small><svg viewBox="0 0 140 38"><path d="M2 30 18 25 36 27 54 23 72 18 90 20 108 10 138 7"/></svg></article>
-          <article class="metric-card"><span>Review score</span><strong>4.46</strong><small class="positive">↑ 0.12 across 126 reviews</small><div class="rating-row">★★★★★</div></article>
-          <article class="metric-card"><span>Locations needing attention</span><strong>2</strong><small class="warning">Back Bay · Cambridge</small><div class="mini-locations"><i class="risk"></i><i class="stable"></i><i class="risk"></i><i class="strong"></i></div></article>
-        </section>
+        <div class="metric-grid">
+          <button class="metric-card" data-view-jump="reviews"><span>Beacon Hill · Yelp</span><strong>4.0</strong><small>763 reviews</small><div class="rating-row">★★★★☆</div></button>
+          <button class="metric-card" data-view-jump="reviews"><span>Locations observed</span><strong>10</strong><small>Current Boston Yelp results</small><div class="mini-locations"><i class="risk"></i><i class="stable"></i><i class="strong"></i><i class="stable"></i></div></button>
+          <button class="metric-card" data-view-jump="market"><span>Dining inflation</span><strong>+5.1%</strong><small>Boston · year over year</small><svg viewBox="0 0 120 35"><path d="M2 31 C20 27 27 30 42 22 S65 18 76 14 S98 11 118 3"/></svg></button>
+          <button class="metric-card" data-view-jump="pricing"><span>Product opportunity</span><strong>68%</strong><small>Modeled pilot margin</small><svg viewBox="0 0 120 35"><path d="M2 29 C19 30 27 24 42 25 S66 17 78 19 S101 9 118 5"/></svg></button>
+        </div>
 
         <div class="content-grid">
-          <section class="panel performance-panel">
-            <div class="panel-heading"><div><span class="eyebrow">Operational scoreboard</span><h3>Location performance</h3></div><button class="text-button" data-view-jump="locations">See all locations →</button></div>
-            <div class="location-table">
-              <div class="table-row table-head"><span>Location</span><span>State</span><span>Main signal</span><span>Sales</span><span>Priority</span></div>
-              <button class="table-row location-row" data-location="Back Bay"><span><i class="loc-dot coral"></i><b>Back Bay</b></span><span class="state attention">Needs attention</span><span>Lunch queue</span><span class="positive">+11.2%</span><span>High</span></button>
-              <button class="table-row location-row" data-location="Seaport"><span><i class="loc-dot teal"></i><b>Seaport</b></span><span class="state improving">Improving</span><span>Cold drinks</span><span class="positive">+9.6%</span><span>Strong</span></button>
-              <button class="table-row location-row" data-location="Cambridge"><span><i class="loc-dot yellow"></i><b>Cambridge</b></span><span class="state watch">Watch</span><span>Card payment</span><span class="negative">−3.4%</span><span>Medium</span></button>
-              <button class="table-row location-row" data-location="South End"><span><i class="loc-dot green"></i><b>South End</b></span><span class="state improving">Improving</span><span>Personal service</span><span class="positive">+6.8%</span><span>Strong</span></button>
+          <section class="panel"><div class="panel-heading"><div><span class="eyebrow">Customer signal</span><h3>What guests are saying</h3></div><button class="text-button" data-view-jump="reviews">Open reviews →</button></div><div class="today-signal-list" id="today-review-list"></div></section>
+          <section class="panel"><div class="panel-heading"><div><span class="eyebrow">Outside context</span><h3>What changed</h3></div><button class="text-button" data-view-jump="market">Open market →</button></div><div class="today-market-list" id="today-market-list"></div></section>
+        </div>
+      </section>
+    </template>
+
+    <template id="reviews-template">
+      <section class="page">
+        <div class="page-heading compact"><div><span class="eyebrow">Customer language</span><h1>Reviews, organized into operating signals.</h1><p>Choose a location to see source-backed comments and recurring themes.</p></div><a class="source-link" href="https://www.yelp.com/search?find_desc=tatte+bakery+%26+cafe&find_loc=Boston%2C+MA" target="_blank" rel="noreferrer">Open Yelp results ↗</a></div>
+        <div class="filter-scroller" id="review-location-tabs"></div>
+        <section class="location-summary" id="review-summary"></section>
+        <div class="review-layout"><section class="panel"><div class="panel-heading"><div><span class="eyebrow">Comments</span><h3 id="review-feed-title">All locations</h3></div><span class="period-label">Recent public reviews</span></div><div class="review-feed" id="review-feed"></div></section><aside class="panel cluster-panel"><div class="panel-heading"><div><span class="eyebrow">Themes</span><h3>What repeats</h3></div></div><div class="cluster-list" id="review-clusters"></div></aside></div>
+      </section>
+    </template>
+
+    <template id="pricing-template">
+      <section class="page">
+        <div class="page-heading compact"><div><span class="eyebrow">Modeled product economics</span><h1>Pricing and product mix, by location.</h1><p>A curated operating model for the pitch: prices, unit mix, margins and growth signals.</p></div><span class="scenario-badge">Scenario pricing</span></div>
+        <div class="filter-row"><div class="filter-scroller" id="pricing-location-tabs"></div><div class="filter-scroller compact-filters" id="pricing-category-tabs"></div></div>
+        <div class="metric-grid" id="pricing-kpis"></div>
+        <section class="panel pricing-panel"><div class="panel-heading"><div><span class="eyebrow">Product detail</span><h3 id="pricing-table-title">All-location mix</h3></div><span class="period-label">Modeled weekly units</span></div><div class="product-table"><div class="product-row product-head"><span>Product</span><span>Category</span><span>Price</span><span>Units</span><span>Margin</span><span>Trend</span></div><div id="product-table-body"></div></div></section>
+      </section>
+    </template>
+
+    <template id="market-template">
+      <section class="page">
+        <div class="page-heading compact"><div><span class="eyebrow">External market context</span><h1>Demand, costs and nearby competition.</h1><p>Current public evidence, connected to the decisions a location operator can make.</p></div></div>
+        <div class="macro-grid" id="macro-grid"></div>
+        <section class="section-block"><div class="section-title"><div><span class="eyebrow">Category movement</span><h2>Signals worth acting on</h2></div></div><div class="trend-grid" id="trend-grid"></div></section>
+        <section class="section-block"><div class="section-title"><div><span class="eyebrow">Nearby businesses</span><h2>Competitive clusters</h2></div><span>Each business opens in Google Maps</span></div><div class="filter-scroller" id="market-location-tabs"></div><div class="competitor-grid" id="competitor-grid"></div></section>
+      </section>
+    </template>
+
+    <template id="next-template">
+      <section class="page">
+        <div class="page-heading compact"><div><span class="eyebrow">This is what you should do next</span><h1>Prioritized actions, with the proof attached.</h1><p>Review the evidence, assign an owner and keep the decision trail in one place.</p></div><div class="decision-summary"><span><b id="open-decision-count">4</b>Open</span><span><b id="approved-decision-count">0</b>Approved</span></div></div>
+        <div class="decision-list" id="recommendation-list"></div>
+      </section>
+    </template>
+
+    <template id="assistant-template">
+      <section class="page assistant-page">
+        <div class="page-heading compact"><div><span class="eyebrow">Grounded operating assistant</span><h1>Ask anything. Then turn the answer into work.</h1><p>Every response draws from reviews, product economics and current market sources before it proposes an action.</p></div><span class="connected-badge"><i></i>3 knowledge layers connected</span></div>
+        <div class="assistant-layout">
+          <section class="assistant-chat panel">
+            <div class="assistant-header"><div class="assistant-avatar">K</div><div><strong>Kernel Assistant</strong><span>Reviews · Pricing · Market</span></div><button class="text-button" id="clear-chat">Clear</button></div>
+            <div class="chat-thread" id="chat-thread"></div>
+            <div class="prompt-chips"><button data-prompt="Why should we test Greek frozen yogurt?">Why froyo?</button><button data-prompt="Which location should run the pilot first?">Best pilot location?</button><button data-prompt="What pricing risks should I watch?">Pricing risks?</button></div>
+            <form class="chat-compose" id="chat-form"><input id="chat-input" autocomplete="off" placeholder="Ask about reviews, pricing, competitors or the next move…"/><button type="submit" aria-label="Send question">↑</button></form>
+          </section>
+          <aside class="agent-workspace panel">
+            <div class="agent-workspace-head"><div><span class="eyebrow">Agentic playbook</span><h2>Greek froyo launch</h2></div><span class="workflow-status" id="workflow-status">Ready</span></div>
+            <p class="workspace-intro">One approval turns the recommendation into a researched launch package for Back Bay and Pier 4.</p>
+            <div class="workflow-list" id="workflow-list">
+              <div class="workflow-step"><span>01</span><div><strong>Research nearby winners</strong><small>Menus, positioning, price points and offers</small></div><i>○</i></div>
+              <div class="workflow-step"><span>02</span><div><strong>Build the offer</strong><small>Product, price, margin and test design</small></div><i>○</i></div>
+              <div class="workflow-step"><span>03</span><div><strong>Create the campaign</strong><small>Brief, launch copy, email and social assets</small></div><i>○</i></div>
+              <div class="workflow-step"><span>04</span><div><strong>Prepare store operations</strong><small>Manager checklist and measurement plan</small></div><i>○</i></div>
             </div>
-          </section>
-
-          <section class="panel change-panel">
-            <div class="panel-heading"><div><span class="eyebrow">What changed</span><h3>Signals to review</h3></div><span class="period-label">Last 7 days</span></div>
-            <button class="change-item open-evidence"><span class="change-rank coral-bg">01</span><span><strong>Light dessert demand</strong><small>37 review mentions · +31% market interest</small></span><b>→</b></button>
-            <button class="change-item" data-action="queue"><span class="change-rank blue-bg">02</span><span><strong>Back Bay lunch queue</strong><small>18 mentions · peak wait +6 minutes</small></span><b>→</b></button>
-            <button class="change-item" data-action="payment"><span class="change-rank yellow-bg">03</span><span><strong>Cambridge payment friction</strong><small>11 mentions after POS change</small></span><b>→</b></button>
-          </section>
+            <div class="artifact-stack" id="artifact-stack" hidden></div>
+            <button class="primary-button run-playbook" id="run-playbook">Run the froyo playbook</button>
+          </aside>
         </div>
       </section>
     </template>
 
-    <template id="locations-template">
-      <section class="page active-page">
-        <div class="page-heading compact"><div><span class="eyebrow">Four Boston locations</span><h1>Compare locations. Find the outlier.</h1><p>Performance is normalized for store size and weekly operating hours.</p></div><div class="segmented"><button class="active">7 days</button><button>30 days</button><button>Quarter</button></div></div>
-        <div class="location-cards">
-          <button class="location-card risk-card" data-location="Back Bay"><div class="location-card-top"><span class="location-index">01</span><span class="state attention">Needs attention</span></div><h2>Back Bay</h2><p>Lunch demand is growing faster than service capacity.</p><div class="location-kpis"><span><b>$61.8k</b><small>Sales</small></span><span><b>4.18</b><small>Rating</small></span><span><b>18</b><small>Queue mentions</small></span></div><div class="topic-bar"><i style="width:78%"></i></div><footer><span>Priority: add lunch coverage</span><b>Review →</b></footer></button>
-          <button class="location-card" data-location="Seaport"><div class="location-card-top"><span class="location-index">02</span><span class="state improving">Improving</span></div><h2>Seaport</h2><p>Cold-drink growth makes this the strongest pilot site.</p><div class="location-kpis"><span><b>$58.4k</b><small>Sales</small></span><span><b>4.54</b><small>Rating</small></span><span><b>+24%</b><small>Cold drinks</small></span></div><div class="topic-bar teal-bar"><i style="width:88%"></i></div><footer><span>Priority: test dessert attach</span><b>Review →</b></footer></button>
-          <button class="location-card watch-card" data-location="Cambridge"><div class="location-card-top"><span class="location-index">03</span><span class="state watch">Watch</span></div><h2>Cambridge</h2><p>Payment friction is suppressing otherwise stable demand.</p><div class="location-kpis"><span><b>$47.1k</b><small>Sales</small></span><span><b>4.31</b><small>Rating</small></span><span><b>11</b><small>Payment mentions</small></span></div><div class="topic-bar yellow-bar"><i style="width:55%"></i></div><footer><span>Priority: audit payment flow</span><b>Review →</b></footer></button>
-          <button class="location-card strong-card" data-location="South End"><div class="location-card-top"><span class="location-index">04</span><span class="state improving">Improving</span></div><h2>South End</h2><p>Named-team-member praise is a repeatable operating advantage.</p><div class="location-kpis"><span><b>$47.5k</b><small>Sales</small></span><span><b>4.72</b><small>Rating</small></span><span><b>24</b><small>Service praise</small></span></div><div class="topic-bar green-bar"><i style="width:93%"></i></div><footer><span>Priority: replicate huddle</span><b>Review →</b></footer></button>
-        </div>
-        <section class="panel compare-panel"><div class="panel-heading"><div><span class="eyebrow">Normalized performance</span><h3>Where the group stands</h3></div><span class="period-label">Demo data · Last 7 days</span></div><div class="compare-chart"><div class="chart-axis"><span>Requires attention</span><span>Group average</span><span>Leading</span></div><div class="compare-line"><span>Back Bay</span><div><i style="left:31%" class="coral-marker"></i></div><b>63</b></div><div class="compare-line"><span>Seaport</span><div><i style="left:79%" class="teal-marker"></i></div><b>84</b></div><div class="compare-line"><span>Cambridge</span><div><i style="left:42%" class="yellow-marker"></i></div><b>68</b></div><div class="compare-line"><span>South End</span><div><i style="left:91%" class="green-marker"></i></div><b>91</b></div></div></section>
-      </section>
-    </template>
-
-    <template id="signals-template">
-      <section class="page active-page">
-        <div class="page-heading compact"><div><span class="eyebrow">Unified signal layer</span><h1>Three data sources. One operating picture.</h1><p>Review the evidence Kernel uses before it becomes a recommendation.</p></div><span class="demo-source-badge">All records shown are synthetic</span></div>
-        <div class="signal-tabs" role="tablist"><button class="active" data-signal="sales"><i class="teal"></i>Private sales<span>8,421 transactions</span></button><button data-signal="reviews"><i class="coral"></i>Customer reviews<span>126 new reviews</span></button><button data-signal="market"><i class="blue"></i>Market context<span>14 competitors</span></button></div>
-        <section class="panel signal-detail" id="signal-detail"></section>
-        <section class="panel cluster-panel"><div class="panel-heading"><div><span class="eyebrow">Cross-source interpretation</span><h3>Different words, same operating pattern</h3></div><button class="text-button open-evidence">Open full evidence →</button></div><div class="cluster-flow"><div class="raw-signals"><span>“something cold”</span><span>“lighter dessert”</span><span>“Greek yogurt”</span><span>“after lunch”</span><span>“summer option”</span></div><svg viewBox="0 0 180 180" aria-hidden="true"><path d="M6 20 Q92 40 165 88M6 55 Q94 64 165 88M6 90 165 88M6 125 Q95 110 165 88M6 160 Q92 132 165 88"/><circle cx="166" cy="88" r="8"/></svg><div class="interpreted-signal"><span class="eyebrow">Recurring demand</span><strong>Light, cold afternoon dessert</strong><small>37 mentions · 3 locations · accelerating</small></div></div></section>
-      </section>
-    </template>
-
-    <template id="decisions-template">
-      <section class="page active-page">
-        <div class="page-heading compact"><div><span class="eyebrow">Decision queue</span><h1>Move from signal to action.</h1><p>Every recommendation includes its evidence, owner, action and measurement plan.</p></div><div class="decision-summary"><span><b id="open-decision-count">3</b>Open</span><span><b id="approved-decision-count">1</b>Approved</span></div></div>
-        <div class="decision-list">
-          <article class="decision-card featured" id="pilot-decision"><div class="decision-number">01</div><div class="decision-main"><div class="decision-meta"><span class="signal-chip opportunity">Growth</span><span>86% confidence</span><span>Back Bay · Seaport</span></div><h2>Pilot Greek frozen yogurt for 14 days.</h2><p>Capture a growing light-dessert signal while measuring whether it attaches to afternoon iced-drink demand.</p><div class="decision-proof"><span><i class="teal"></i>Sales +24%</span><span><i class="coral"></i>37 review mentions</span><span><i class="blue"></i>Market +31%</span></div></div><div class="decision-actions"><button class="secondary-button open-evidence">Review evidence</button><button class="primary-button approve-inline">Approve pilot</button></div></article>
-          <article class="decision-card"><div class="decision-number">02</div><div class="decision-main"><div class="decision-meta"><span class="signal-chip alert">Operations</span><span>92% confidence</span><span>Back Bay</span></div><h2>Add a second register from 11:30–1:30.</h2><p>Lunch transactions rose 11.2%, while queue-related reviews increased 220% and median peak wait reached 12 minutes.</p><div class="decision-proof"><span><i class="teal"></i>Lunch sales +11.2%</span><span><i class="coral"></i>18 queue mentions</span></div></div><div class="decision-actions"><button class="secondary-button" data-action="queue">View action</button><button class="primary-button" data-approve="queue">Assign to manager</button></div></article>
-          <article class="decision-card"><div class="decision-number">03</div><div class="decision-main"><div class="decision-meta"><span class="signal-chip watch">Experience</span><span>81% confidence</span><span>Cambridge</span></div><h2>Audit the new card-payment flow.</h2><p>Payment complaints appeared immediately after the POS change and correlate with a 3.4% decline in completed peak-hour tickets.</p><div class="decision-proof"><span><i class="teal"></i>Completion −3.4%</span><span><i class="coral"></i>11 payment mentions</span></div></div><div class="decision-actions"><button class="secondary-button" data-action="payment">View action</button><button class="primary-button" data-approve="payment">Assign to manager</button></div></article>
-          <article class="decision-card approved-card"><div class="decision-number">✓</div><div class="decision-main"><div class="decision-meta"><span class="signal-chip approved">Approved</span><span>South End → All locations</span></div><h2>Replicate the opening-shift service huddle.</h2><p>South End’s named-team-member praise is now the standard opening routine for all four locations.</p></div><div class="decision-actions"><span class="approved-label">Approved Sep 26</span></div></article>
-        </div>
-      </section>
-    </template>
-
+    <script src="./data.js"></script>
     <script src="./app.js"></script>
   </body>
 </html>
